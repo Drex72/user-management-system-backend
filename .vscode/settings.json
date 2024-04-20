@@ -3,4 +3,7 @@
         "source.organizeImports": "always",
         "source.fixAll": "always",
     },
+    "[typescript]": {
+        "editor.tabSize": 4
+    }
 }
