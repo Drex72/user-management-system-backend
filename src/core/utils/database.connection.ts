@@ -1,4 +1,4 @@
-import { handleSetAssociations } from "../../database/associations"
+import { handleSetAssociations } from "@/database/associations"
 import { logger, sequelize } from "@/core"
 
 export const initializeDbConnection = async () => {

@@ -1,7 +1,7 @@
-import { type Context, ForbiddenError, HttpStatus } from "@/core"
-import { AppMessages } from "@/core//common"
-import { Users } from "@/auth/model/user.model"
 import type { SignOutPayload } from "@/auth/interfaces"
+import { Users } from "@/auth/model/user.model"
+import { HttpStatus, type Context } from "@/core"
+import { AppMessages } from "@/core//common"
 
 class SignOut {
     constructor(private readonly dbUsers: typeof Users) {}

@@ -28,8 +28,6 @@ class SignIn {
 
         if (!isPasswordValid) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
 
-        if (user.role === "USER" && !user.isVerified) throw new ForbiddenError(AppMessages.FAILURE.VERIFY_ACCOUNT)
-
         const [generatedAccessToken, generatedRefreshToken] = await this.tokenService.getTokens({
             id: user.id,
             email: user.email,

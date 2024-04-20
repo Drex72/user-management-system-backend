@@ -45,7 +45,6 @@ const envSchema = Joi.object()
             otherwise: Joi.optional(),
         }),
 
-        USER_DEFAULT_PASSWORD: Joi.string().required(),
     })
     .unknown()
 
@@ -61,8 +60,6 @@ export const config = Object.freeze({
     port: validatedEnvVars.PORT,
 
     appEnvironment: validatedEnvVars.NODE_ENV as INodeEnv,
-
-    userDefaultPassword: validatedEnvVars.USER_DEFAULT_PASSWORD,
 
     auth: {
         accessTokenSecret: validatedEnvVars.ACCESS_TOKEN_SECRET,
