@@ -1,5 +1,5 @@
-import type { SignOutPayload } from "@/auth/interfaces"
-import { Users } from "@/auth/model/user.model"
+import type { SignOutPayload } from "@/authentication/interfaces"
+import { Users } from "@/authentication/model/user.model"
 import { HttpStatus, type Context } from "@/core"
 import { AppMessages } from "@/core//common"
 

@@ -1,4 +1,4 @@
-import { authRouter } from "@/auth"
+import { authRouter } from "@/authentication"
 import { HttpStatus } from "@/core"
 import { Router } from "express"
 

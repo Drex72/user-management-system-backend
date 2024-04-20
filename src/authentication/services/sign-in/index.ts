@@ -1,8 +1,8 @@
-import { HttpStatus, compareHashedData, logger, type Context, UnAuthorizedError, ForbiddenError } from "@/core"
+import { tokenService, type TokenService } from "@/authentication/helpers/token"
+import type { SignInPayload } from "@/authentication/interfaces"
+import { Users } from "@/authentication/model/user.model"
+import { HttpStatus, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
-import type { SignInPayload } from "@/auth/interfaces"
-import { tokenService, type TokenService } from "@/auth/helpers/token"
-import { Users } from "@/auth/model/user.model"
 
 class SignIn {
     constructor(private readonly dbUser: typeof Users, private readonly tokenService: TokenService) {}

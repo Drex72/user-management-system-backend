@@ -1,8 +1,8 @@
-import type { IncomingHttpHeaders } from "http"
+import type { IHttpMethod } from "@/authentication/helpers/permissions/types"
+import type { auth_roles } from "@/authentication/model"
 import "express"
+import type { IncomingHttpHeaders } from "http"
 import type { Schema } from "joi"
-import type { IHttpMethod } from "@/auth/helpers/permissions/types"
-import type { auth_roles } from "@/auth/model"
 
 interface IResourcePermissions {
     resourceName: string

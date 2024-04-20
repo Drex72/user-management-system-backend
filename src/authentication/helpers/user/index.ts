@@ -1,7 +1,7 @@
-import { AppMessages } from "@/core/common"
+import type { ICreateUser } from "@/authentication/interfaces"
+import { Users } from "@/authentication/model/user.model"
 import { BadRequestError, hashData, logger, sequelize } from "@/core"
-import type { ICreateUser } from "@/auth/interfaces"
-import { Users } from "@/auth/model/user.model"
+import { AppMessages } from "@/core/common"
 
 class CreateUser {
     constructor(private readonly dbUser: typeof Users) {}
