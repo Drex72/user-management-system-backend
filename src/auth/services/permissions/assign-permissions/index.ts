@@ -15,8 +15,6 @@ class AssignPermissions {
     handle = async ({ query, input }: Context<AssignPermissionsPayload>) => {
         const { roleId, userId } = query
 
-        console.log(userId, roleId)
-
         const { permissionIds } = input
 
         if (userId) {
