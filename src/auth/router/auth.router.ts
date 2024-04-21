@@ -1,10 +1,10 @@
 
 import { signIn, signOut, signUp } from "@/auth/services"
-import { createPermision, getPermissions } from "@/auth/services/permissions"
+import { assignPermissions, createPermision, getPermissions } from "@/auth/services/permissions"
 import { createRole, getRoles } from "@/auth/services/roles"
 import { ControlBuilder } from "@/core/middlewares/controlBuilder"
 import { Router } from "express"
-import { nameSchema, signInSchema, signUpSchema } from "./schema"
+import { assignPermissionSchema, nameSchema, signInSchema, signUpSchema } from "./schema"
 
 export const authRouter = Router()
 
@@ -59,6 +59,15 @@ authRouter
       .setHandler(getPermissions.handle)
       .handle(),
   )
+
+authRouter.post(
+  "/assign-permissions",
+  ControlBuilder.builder()
+  .setHandler(assignPermissions.handle)
+  .setValidator(assignPermissionSchema)
+  .handle(),
+
+)
 
 
 

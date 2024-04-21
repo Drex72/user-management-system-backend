@@ -23,3 +23,14 @@ export const nameSchema: ValidationSchema = {
         name: Joi.string().trim().required(),
     }),
 }
+
+export const assignPermissionSchema: ValidationSchema = {
+    inputSchema: Joi.object({
+        permissionIds: Joi.array().items(Joi.string()).required(),
+    }),
+
+    querySchema: Joi.object({
+        userId: Joi.string().length(36).trim().optional(),
+        roleId: Joi.string().length(36).trim().optional(),
+    }),
+}

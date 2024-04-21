@@ -1,8 +1,8 @@
-name: CI/CD Pipeline - runs tests and deploys Nithub Server
+name: CI/CD Pipeline - runs tests and deploys to Nithub Server (Staging Server)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
 
   workflow_dispatch:
 
@@ -34,14 +34,15 @@ jobs:
         port: ${{ secrets.PORT }}
         command_timeout: 200m
         script: |
-          if [ -d "nithub-management-system" ]; then
+          if [ -d "nithub-management-system-staging" ]; then
             echo "Directory exists. Pulling latest changes."
-            cd nithub-management-system
-            git pull origin main
+            cd nithub-management-system-staging
+            git pull origin dev
             docker compose restart
           else
             echo "Directory does not exist. Cloning repository."
-            git clone https://github.com/nithubunilag/user-management-system-backend.git nithub-management-system
-            cd nithub-management-system
+            git clone https://github.com/nithubunilag/user-management-system-backend.git nithub-management-system-staging
+            cd nithub-management-system-staging
+            git checkout dev
             docker-compose up -d
           fi

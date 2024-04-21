@@ -15,14 +15,16 @@ class AssignPermissions {
     handle = async ({ query, input }: Context<AssignPermissionsPayload>) => {
         const { roleId, userId } = query
 
+        console.log(userId, roleId)
+
         const { permissionIds } = input
 
         if (userId) {
-            this.assignPermissionsToUser(userId, permissionIds)
+            return this.assignPermissionsToUser(userId, permissionIds)
         }
 
         if (roleId) {
-            this.assignPermissionsToRole(roleId, permissionIds)
+            return this.assignPermissionsToRole(roleId, permissionIds)
         }
 
         throw new BadRequestError("Must provide userId or roleId")
