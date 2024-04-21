@@ -54,15 +54,15 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
             },
-            created_at: {
-                allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+            createdAt: {
                 type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
+                allowNull: false,
             },
-            updated_at: {
-                allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+            updatedAt: {
                 type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
+                allowNull: false,
             },
         })
     },
