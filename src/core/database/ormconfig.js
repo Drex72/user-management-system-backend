@@ -18,6 +18,8 @@ module.exports = {
             underscored: true,
         },
         dialect: "postgres",
+        ssl: true,
+        dialectOptions: { ssl: { require: true } },
     },
 
     production: {

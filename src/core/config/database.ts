@@ -17,5 +17,5 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     },
     sync: { alter: { drop: true } },
     dialectOptions: { ssl: { require: true } },
-    // ssl: true,
+    ssl: true,
 })

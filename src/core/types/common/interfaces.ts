@@ -1,5 +1,5 @@
-import type { auth_roles } from "@/authentication/model"
 import { permissionAbility } from "@/core/common"
+import type { user_roles } from "@/users/model"
 import "express"
 import type { IncomingHttpHeaders } from "http"
 import type { Schema } from "joi"
@@ -14,7 +14,7 @@ import type { Schema } from "joi"
 export type ControllerHandlerOptions = {
     isPrivate: boolean
     isPrivateAndPublic?: boolean
-    allowedRoles?: AllowedRole[] 
+    allowedRoles?: AllowedRole[]
 }
 
 /**
@@ -22,16 +22,16 @@ export type ControllerHandlerOptions = {
  * This type refers to a predefined list of Permission Types.
  * @typedef {PermissionAbilityType} PermissionAbilityType
  */
-export type PermissionAbilityType = keyof typeof permissionAbility;
+export type PermissionAbilityType = keyof typeof permissionAbility
 
 /**
  * Represents a role that has been defined in the authentication model.
  * This type refers to a predefined list of roles.
- * These are default Roles that are prepopulated in the DB, 
+ * These are default Roles that are prepopulated in the DB,
  * if you add a new Entity Type, add it here also to avoid typographical errors
  * @typedef {IAuthRole} IAuthRole
  */
-export type IAuthRole = (typeof auth_roles)[number]
+export type IAuthRole = (typeof user_roles)[number]
 
 /**
  * Defines a complex object that includes a role and associated permissions.
@@ -40,15 +40,15 @@ export type IAuthRole = (typeof auth_roles)[number]
  * @property {IPermissionAbilityType[]} permissions - List of permissions granted to the role.
  */
 type RoleObject = {
-    role: IAuthRole;
-    permissions: PermissionAbilityType[];
+    role: IAuthRole
+    permissions: PermissionAbilityType[]
 }
 
 /**
  * Type definition that can represent either a role as a string or a RoleObject with detailed permissions.
  * @typedef {(IAuthRole | RoleObject)} AllowedRole
  */
-export type AllowedRole = IAuthRole | RoleObject;
+export type AllowedRole = IAuthRole | RoleObject
 
 /**
  * Represents the payload of a signed JWT token for authenticated users.

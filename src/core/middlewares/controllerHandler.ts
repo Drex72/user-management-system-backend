@@ -1,4 +1,4 @@
-import { authGuard } from "@/authentication/helpers/authGuard"
+import { authGuard } from "@/auth/helpers/authGuard"
 import type { AllowedRole, AnyFunction, ControllerHandlerOptions, ExpressCallbackFunction, ITokenSignedPayload, ValidationSchema } from "@/core"
 import {
     ForbiddenError,

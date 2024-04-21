@@ -7,6 +7,7 @@
     "seed:generate": "npx sequelize-cli seed:generate --name ",
     "db:migrate": "npx sequelize-cli db:migrate",
     "undo:db:migrate": "npx sequelize-cli db:migrate:undo --name",
+    "undo:db:migrate:all": "npx sequelize-cli db:migrate:undo:all",
     "db:seed": "npx sequelize-cli db:seed:all",
 
     "start:dev": "nodemon",
