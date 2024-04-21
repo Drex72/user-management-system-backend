@@ -9,7 +9,7 @@ module.exports = {
          * Example:
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-        await queryInterface.createTable("rolePermissions", {
+        await queryInterface.createTable("userPermissions", {
             id: {
                 type: Sequelize.UUID,
                 allowNull: false,
@@ -49,7 +49,7 @@ module.exports = {
             },
         })
 
-        await queryInterface.addIndex("userPermissions", ["permissionId", "roleId"], {
+        await queryInterface.addIndex("userPermissions", ["permissionId", "userId"], {
             unique: true,
         })
     },
