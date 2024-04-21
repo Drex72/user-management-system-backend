@@ -1,4 +1,4 @@
-import type { AllowedRole, AnyFunction, ControllerHandlerOptions, ValidationSchema } from "../types"
+import type { AnyFunction, ControllerHandlerOptions, IAuthRole, ValidationSchema } from "../types"
 import { ControllerHandler } from "./controllerHandler"
 
 /**
@@ -64,12 +64,24 @@ export class ControlBuilder {
     }
 
     /**
-     * Specifies roles allowed to access the route. Automatically marks the route as private.
-     * @param {...AllowedRole[]} allowed - An array of allowed roles.
+     * Specifies Permissions allowed to access the route. Automatically marks the route as private.
+     * @param {...string[]} allowed - An array of allowed permissions.
      * @returns {ControlBuilder} The instance of this builder for chaining.
      */
-    only(...allowed: AllowedRole[]) {
+    withPermission(permission: string) {
+        this.options = { isPrivate: true, allowedPermission: permission }
+
+        return this
+    }
+
+    /**
+     * Specifies roles allowed to access the route. Automatically marks the route as private.
+     * @param {...IAuthRole[]} allowed - An array of allowed roles.
+     * @returns {ControlBuilder} The instance of this builder for chaining.
+     */
+    only(...allowed: IAuthRole[]) {
         this.options = { isPrivate: true, allowedRoles: allowed }
+
         return this
     }
 

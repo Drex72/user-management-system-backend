@@ -1,9 +1,9 @@
+import { Permission, Role, RolePermissions, UserPermissions, UserRoles } from "@/auth/model"
 import { User } from "@/users/model"
-import { Permission, Role, RolePermissions, UserPermissions } from "@/auth/model"
 
 export const handleSetAssociations = () => {
-    User.belongsTo(Role, { foreignKey: "roleId", as: "role" })
-    Role.hasMany(User)
+    User.belongsToMany(Role, { through: UserRoles })
+    Role.belongsToMany(User, { through: UserRoles })
 
     Role.belongsToMany(Permission, { through: RolePermissions })
     Permission.belongsToMany(Role, { through: RolePermissions })

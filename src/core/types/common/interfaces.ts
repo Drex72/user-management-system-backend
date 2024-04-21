@@ -13,8 +13,14 @@ import type { Schema } from "joi"
  */
 export type ControllerHandlerOptions = {
     isPrivate: boolean
+
     isPrivateAndPublic?: boolean
-    allowedRoles?: AllowedRole[]
+
+    // Only users that have roles specified in the allowedRoles property can access the handler. But Note Permissions Take priority over roles
+    allowedRoles?: IAuthRole[]
+
+    // Permissions take priority over roles
+    allowedPermission?: string
 }
 
 /**
@@ -34,23 +40,6 @@ export type PermissionAbilityType = keyof typeof permissionAbility
 export type IAuthRole = (typeof user_roles)[number]
 
 /**
- * Defines a complex object that includes a role and associated permissions.
- * @typedef {Object} RoleObject
- * @property {IAuthRole} role - The role of the user.
- * @property {IPermissionAbilityType[]} permissions - List of permissions granted to the role.
- */
-type RoleObject = {
-    role: IAuthRole
-    permissions: PermissionAbilityType[]
-}
-
-/**
- * Type definition that can represent either a role as a string or a RoleObject with detailed permissions.
- * @typedef {(IAuthRole | RoleObject)} AllowedRole
- */
-export type AllowedRole = IAuthRole | RoleObject
-
-/**
  * Represents the payload of a signed JWT token for authenticated users.
  * @typedef {Object} ITokenSignedPayload
  * @property {string} id - Unique identifier of the user.
@@ -60,7 +49,7 @@ export type AllowedRole = IAuthRole | RoleObject
 export type ITokenSignedPayload = {
     id: string
     email: string
-    role: IAuthRole
+    roles: IAuthRole[]
 }
 
 /**

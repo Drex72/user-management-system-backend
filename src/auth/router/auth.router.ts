@@ -8,7 +8,7 @@ import { assignPermissionSchema, nameSchema, signInSchema, signUpSchema } from "
 
 export const authRouter = Router()
 
-authRouter.get(
+authRouter.post(
     "/sign-up", 
     ControlBuilder.builder()
     .setHandler(signUp.handle)

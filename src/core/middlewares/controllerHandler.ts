@@ -1,5 +1,6 @@
+import { cache } from "@/app/app-cache"
 import { authGuard } from "@/auth/helpers/authGuard"
-import type { AllowedRole, AnyFunction, ControllerHandlerOptions, ExpressCallbackFunction, ITokenSignedPayload, ValidationSchema } from "@/core"
+import type { AnyFunction, ControllerHandlerOptions, ExpressCallbackFunction, IAuthRole, ITokenSignedPayload, ValidationSchema } from "@/core"
 import {
     ForbiddenError,
     HttpStatus,
@@ -10,7 +11,6 @@ import {
     logger,
     parseControllerArgs,
 } from "@/core"
-import { permissionAbility } from "@/core/common"
 import type { NextFunction, Request, Response } from "express"
 import { AppMessages } from "../common"
 
@@ -33,9 +33,19 @@ type AuthenticateRequestOptions = {
  * @property {AllowedRole[]} allowedRoles The roles allowed to access the controller.
  */
 type AuthorizeRequestOptions = {
-    method: string
     user: ITokenSignedPayload
-    allowedRoles: AllowedRole[]
+    permission: string
+    allowedRoles: IAuthRole[]
+}
+
+type PermissionBasedAuthorizationOptions = {
+    userId: string
+    permission: string
+}
+
+type RoleBasedAuthorizationOptions = {
+    userRoles: IAuthRole[]
+    allowedRoles: IAuthRole[]
 }
 
 /**
@@ -65,11 +75,11 @@ export class ControllerHandler {
                 }
 
                 // Authorize the request if roles are specified and user exists.
-                if (options.allowedRoles && options.allowedRoles.length > 0 && req.user) {
+                if ((options.allowedPermission || options.allowedRoles?.length) && req.user) {
                     this.authorizeRequest({
-                        method: req.method,
                         user: req.user,
-                        allowedRoles: options.allowedRoles,
+                        allowedRoles: (options.allowedRoles = []),
+                        permission: options.allowedPermission ?? "",
                     })
                 }
 
@@ -113,7 +123,7 @@ export class ControllerHandler {
         const { callbackFn, cookies, user } = data
 
         // If user data exists and is valid, skip authentication.
-        if (user && user.id && user?.role) return
+        if (user && user.id && user?.roles.length) return
 
         // Perform authentication using authGuard.
         const isRequestAllowed = await authGuard.guard(cookies)
@@ -149,33 +159,45 @@ export class ControllerHandler {
      * @param {AuthorizeRequestOptions} data The authorization data.
      * @private
      */
-    private authorizeRequest(data: AuthorizeRequestOptions) {
-        const { allowedRoles, method, user } = data
+    private async authorizeRequest(data: AuthorizeRequestOptions) {
+        const { user, allowedRoles, permission } = data
 
-        let roleFound = false
-
-        allowedRoles.map((role) => {
-            if (typeof role === "string") {
-                const isRequestAuthorized = role.toLocaleLowerCase() === user.role.toLocaleLowerCase()
-
-                if (isRequestAuthorized) roleFound = true
-
-                return
-            }
-
-            if (typeof role !== "string" && role?.role) {
-                const isRequestAuthorized = role.role.toLocaleLowerCase() === user.role.toLocaleLowerCase()
-
-                if (!isRequestAuthorized) return
-
-                const isMethodAuthorized = role.permissions.find((permission) => permissionAbility[permission] === method)
-
-                if (isMethodAuthorized) roleFound = true
-
-                return
-            }
+        // Check for permission-based authorization
+        const hasPermission = await this.permissionBasedAuthorization({
+            permission,
+            userId: user.id,
         })
 
-        if (!roleFound) throw new ForbiddenError("You do not have access to the requested resource")
+        // If the user has the necessary permission, early return
+        if (hasPermission) return
+
+        // Check for role-based authorization only if permission-based authorization fails
+        const hasRole = await this.roleBasedAuthorization({
+            allowedRoles: allowedRoles,
+            userRoles: user.roles,
+        })
+
+        // If the user does not have the role, throw an error
+        if (!hasRole) {
+            throw new ForbiddenError("Access denied: You do not have the required role or permission.")
+        }
+    }
+
+    private async permissionBasedAuthorization(options: PermissionBasedAuthorizationOptions): Promise<boolean> {
+        const { permission, userId } = options
+
+        // Retrieve user's permissions from the cache using the user ID.
+        const userPermissions = await cache.get(`${userId}-permissions`)
+
+        // Check if the user permissions array includes the required permission.
+        // If the userPermissions is null or undefined, it will return false.
+        return userPermissions ? userPermissions.includes(permission) : false
+    }
+
+    private async roleBasedAuthorization(options: RoleBasedAuthorizationOptions): Promise<boolean> {
+        const { allowedRoles, userRoles } = options
+
+        // Check if any user role matches any of the allowed roles
+        return userRoles.some((userRole) => allowedRoles.some((allowedRole) => allowedRole.toLocaleLowerCase() === userRole.toLocaleLowerCase()))
     }
 }

@@ -1,8 +1,9 @@
 import { tokenService, type TokenService } from "@/auth/helpers/token"
 import type { SignInPayload } from "@/auth/interfaces"
-import { User } from "@/users/model"
-import { HttpStatus, IAuthRole, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
+import { Role } from "@/auth/model"
+import { HttpStatus, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
+import { User } from "@/users/model"
 
 class SignIn {
     constructor(private readonly dbUser: typeof User, private readonly tokenService: TokenService) {}
@@ -20,7 +21,10 @@ class SignIn {
 
         const user = await this.dbUser.findOne({
             where: { email },
+            include: [Role],
         })
+
+        console.log(user)
 
         if (!user) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
 
@@ -31,7 +35,7 @@ class SignIn {
         const [generatedAccessToken, generatedRefreshToken] = await this.tokenService.getTokens({
             id: user.id,
             email: user.email,
-            role: "ADMIN",
+            roles: ["ADMIN"],
         })
 
         await this.dbUser.update({ refreshToken: generatedRefreshToken, refreshTokenExp: new Date() }, { where: { id: user.id } })

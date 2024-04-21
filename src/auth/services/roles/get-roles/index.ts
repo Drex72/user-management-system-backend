@@ -7,7 +7,6 @@ class GetRoles {
     handle = async () => {
         const roles = await this.dbRole.findAll({
             include: [Permission],
-            
         })
 
         logger.info("Roles Retrieved Successfully")

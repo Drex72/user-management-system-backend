@@ -6,8 +6,9 @@ export interface UserPayload {
     lastName: string
     email: string
     password: string
-    roleId: string
+    phoneNumber:string
     isVerified?: boolean
+    roleIds:string[]
 }
 
 export interface SignInPayload extends ContextTypes {
