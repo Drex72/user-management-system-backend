@@ -10,6 +10,8 @@ export const AppMessages = {
     },
     SUCCESS: {
         LOGIN: "Login successful.",
+        ACCOUNT_CREATED: "Account Created successfully.",
+
         ADMIN_INVITED: "Invitation Sent successfully.",
         LOGOUT: "Logged out successfully.",
         SIGNUP: "Signup successful",

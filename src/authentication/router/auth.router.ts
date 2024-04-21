@@ -1,9 +1,18 @@
+
 import { ControlBuilder } from "@/core/middlewares/controlBuilder"
 import { Router } from "express"
-import { refreshToken, signIn, signOut } from "../services"
-import { signInSchema } from "./schema"
+import { signIn, signOut, signUp } from "../services"
+import { signInSchema, signUpSchema } from "./schema"
 
 export const authRouter = Router()
+
+authRouter.get(
+    "/sign-up", 
+    ControlBuilder.builder()
+    .setHandler(signUp.handle)
+    .setValidator(signUpSchema)
+    .handle()
+)
 
 authRouter.post(
     "/sign-in", 
@@ -12,14 +21,6 @@ authRouter.post(
     .setHandler(signIn.handle)
     .handle()
 )
-
-authRouter.get(
-    "/refresh-token", 
-    ControlBuilder.builder()
-    .setHandler(refreshToken.handle)
-    .handle()
-)
-
 
 authRouter.post(
     "/sign-out", 

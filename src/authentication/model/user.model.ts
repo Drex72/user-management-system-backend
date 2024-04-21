@@ -1,4 +1,4 @@
-import { sequelize, type IAuthRoles } from "@/core"
+import { sequelize, type IAuthRole } from "@/core"
 import {
     DataTypes,
     Model,
@@ -10,7 +10,7 @@ import {
 
 export const auth_roles = ["SUPER ADMIN", "ADMIN", "USER", "DEVELOPER"] as const
 
-export class Users extends Model<InferAttributes<Users>, InferCreationAttributes<Users>> {
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 
     declare id: CreationOptional<string>
     declare firstName: string
@@ -26,10 +26,10 @@ export class Users extends Model<InferAttributes<Users>, InferCreationAttributes
     declare refreshToken: CreationOptional<string>
     declare refreshTokenExp: CreationOptional<Date>
     declare isVerified: CreationOptional<boolean>
-    declare role: IAuthRoles
+    declare role: IAuthRole
 }
 
-Users.init(
+User.init(
     {
         id: {
             type: DataTypes.UUID,

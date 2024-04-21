@@ -1,9 +1,19 @@
-import type { Request } from "express"
-import type { FileObjects, RequestFileContents } from "../types"
-import type { FileArray } from "express-fileupload"
+import type { Request } from "express";
+import type { FileArray } from "express-fileupload";
+import { IncomingHttpHeaders } from "http";
+import type { FileObjects, ITokenSignedPayload, RequestFileContents } from "../types";
+
+export type ParsedRequestContext = {
+    input: any;
+    params: any;
+    query: any;
+    headers: IncomingHttpHeaders;
+    user?: ITokenSignedPayload | null;
+    files: FileObjects | null;
+}
 
 class ParseContextArgs {
-    parse = (req: Request) => {
+    parse = (req: Request):ParsedRequestContext => {
         return {
             input: req.body,
             params: req.params,

@@ -1,10 +1,10 @@
 import type { SignOutPayload } from "@/authentication/interfaces"
-import { Users } from "@/authentication/model/user.model"
+import { User } from "@/authentication/model/user.model"
 import { HttpStatus, type Context } from "@/core"
 import { AppMessages } from "@/core//common"
 
 class SignOut {
-    constructor(private readonly dbUsers: typeof Users) {}
+    constructor(private readonly dbUsers: typeof User) {}
 
     /**
      * @description Destroys user session
@@ -24,4 +24,4 @@ class SignOut {
     }
 }
 
-export const signOut = new SignOut(Users)
+export const signOut = new SignOut(User)

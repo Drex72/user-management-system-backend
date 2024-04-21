@@ -7,3 +7,13 @@ export const signInSchema: ValidationSchema = {
         email: Joi.string().email().required().trim(),
     }),
 }
+
+export const signUpSchema: ValidationSchema = {
+    inputSchema: Joi.object({
+        password: Joi.string().trim().required(),
+        firstName: Joi.string().trim().required(),
+        lastName: Joi.string().trim().required(),
+        otherName: Joi.string().trim().optional(),
+        email: Joi.string().email().required().trim(),
+    }),
+}

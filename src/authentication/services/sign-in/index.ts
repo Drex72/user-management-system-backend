@@ -1,11 +1,11 @@
 import { tokenService, type TokenService } from "@/authentication/helpers/token"
 import type { SignInPayload } from "@/authentication/interfaces"
-import { Users } from "@/authentication/model/user.model"
+import { User } from "@/authentication/model/user.model"
 import { HttpStatus, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
 
 class SignIn {
-    constructor(private readonly dbUser: typeof Users, private readonly tokenService: TokenService) {}
+    constructor(private readonly dbUser: typeof User, private readonly tokenService: TokenService) {}
 
     /**
      * Handles user login, performs necessary validations, and generates tokens for authentication.
@@ -39,7 +39,7 @@ class SignIn {
         logger.info("Logged In Successfully")
 
         const { password: dbPassword, refreshToken, refreshTokenExp, ...responsePayload } = user.dataValues
-        
+
         return {
             code: HttpStatus.OK,
             message: AppMessages.SUCCESS.LOGIN,
@@ -54,4 +54,4 @@ class SignIn {
     }
 }
 
-export const signIn = new SignIn(Users, tokenService)
+export const signIn = new SignIn(User, tokenService)
