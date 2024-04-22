@@ -1,7 +1,7 @@
 import { tokenService, type TokenService } from "@/auth/helpers/token"
 import type { SignInPayload } from "@/auth/interfaces"
 import { Role } from "@/auth/model"
-import { HttpStatus, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
+import { HttpStatus, IAuthRole, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
 import { User } from "@/users/model"
 
@@ -24,18 +24,18 @@ class SignIn {
             include: [Role],
         })
 
-        console.log(user)
-
         if (!user) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
 
         const isPasswordValid = await compareHashedData(password, user.password)
 
         if (!isPasswordValid) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
 
+        const roles = user.roles?.map((role) => role.name as IAuthRole) ?? []
+
         const [generatedAccessToken, generatedRefreshToken] = await this.tokenService.getTokens({
             id: user.id,
             email: user.email,
-            roles: ["ADMIN"],
+            roles,
         })
 
         await this.dbUser.update({ refreshToken: generatedRefreshToken, refreshTokenExp: new Date() }, { where: { id: user.id } })

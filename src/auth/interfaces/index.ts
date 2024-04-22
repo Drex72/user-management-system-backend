@@ -6,7 +6,7 @@ export interface UserPayload {
     lastName: string
     email: string
     password: string
-    phoneNumber:string
+    phoneNumber?:string
     isVerified?: boolean
     roleIds:string[]
 }

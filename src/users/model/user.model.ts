@@ -1,3 +1,4 @@
+import { Role } from "@/auth/model"
 import { sequelize } from "@/core"
 import { DataTypes, Model, UUIDV4, type CreationOptional, type InferAttributes, type InferCreationAttributes } from "sequelize"
 
@@ -15,6 +16,8 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare refreshToken: CreationOptional<string>
     declare refreshTokenExp: CreationOptional<Date>
     declare isVerified: CreationOptional<boolean>
+
+    public readonly roles?: Role[]
 }
 
 User.init(
@@ -44,7 +47,7 @@ User.init(
         },
         phoneNumber: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             unique: true,
         },
         emailVerified: {

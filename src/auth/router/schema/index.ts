@@ -14,7 +14,7 @@ export const signUpSchema: ValidationSchema = {
         firstName: Joi.string().trim().required(),
         lastName: Joi.string().trim().required(),
         otherName: Joi.string().trim().optional(),
-        phoneNumber:Joi.string().trim().required(),
+        phoneNumber:Joi.string().trim().optional(),
         email: Joi.string().email().required().trim(),
         roleIds: Joi.array().items(Joi.string().length(36)).min(1).required(),
     }),
