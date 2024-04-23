@@ -1,12 +1,12 @@
 import { tokenService, type TokenService } from "@/auth/helpers/token"
 import type { SignInPayload } from "@/auth/interfaces"
-import { Role } from "@/auth/model"
+import { Auth, Role } from "@/auth/model"
 import { HttpStatus, IAuthRole, UnAuthorizedError, compareHashedData, logger, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
 import { User } from "@/users/model"
 
 class SignIn {
-    constructor(private readonly dbUser: typeof User, private readonly tokenService: TokenService) {}
+    constructor(private readonly dbAuth: typeof Auth,  private readonly tokenService: TokenService) {}
 
     /**
      * Handles user login, performs necessary validations, and generates tokens for authentication.
@@ -19,14 +19,25 @@ class SignIn {
     handle = async ({ input }: Context<SignInPayload>) => {
         const { email, password } = input
 
-        const user = await this.dbUser.findOne({
+        // const authUser = await this.dbAuth.findOne({
+        //     where: { email },
+        // })
+
+        const authUser = await this.dbAuth.findOne({
             where: { email },
-            include: [Role],
+            include: [
+                {
+                    model: User,
+                    include: [Role],
+                },
+            ],
         })
 
-        if (!user) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
+        const user = authUser?.user
 
-        const isPasswordValid = await compareHashedData(password, user.password)
+        if (!authUser || !user) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
+
+        const isPasswordValid = await compareHashedData(password, authUser.password)
 
         if (!isPasswordValid) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
 
@@ -38,11 +49,11 @@ class SignIn {
             roles,
         })
 
-        await this.dbUser.update({ refreshToken: generatedRefreshToken, refreshTokenExp: new Date() }, { where: { id: user.id } })
+        await this.dbAuth.update({ refreshToken: generatedRefreshToken, refreshTokenExp: new Date() }, { where: { id: user.id } })
 
         logger.info("Logged In Successfully")
 
-        const { password: dbPassword, refreshToken, refreshTokenExp, ...responsePayload } = user.dataValues
+        const { password: dbPassword, refreshToken, refreshTokenExp, ...responsePayload } = authUser.dataValues
 
         return {
             code: HttpStatus.OK,
@@ -58,4 +69,4 @@ class SignIn {
     }
 }
 
-export const signIn = new SignIn(User, tokenService)
+export const signIn = new SignIn(Auth, tokenService)
