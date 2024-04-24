@@ -57,8 +57,18 @@ module.exports = {
             },
             entryTime: {
                 type: Sequelize.TIME,
-                allowNull: false,
+                allowNull: true,
                 comment: "Time of the event",
+            },
+            createdAt: {
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
+                allowNull: false,
+            },
+            updatedAt: {
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
+                allowNull: false,
             },
         })
     },

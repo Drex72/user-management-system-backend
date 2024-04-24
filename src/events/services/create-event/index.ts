@@ -29,6 +29,8 @@ class CreateEvent {
 
             await this.dbEvent.update({ inviteLink }, { where: { id: createdEvent.id }, transaction: dbTransaction })
 
+            dbTransaction.commit()
+
             return {
                 code: HttpStatus.OK,
                 message: "Event Created Successfully",

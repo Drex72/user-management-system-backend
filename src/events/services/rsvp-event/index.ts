@@ -18,6 +18,10 @@ class RSVPEvent {
             where: { id: eventId },
         })
 
+        const allEvents = await this.dbEvent.findAll()
+
+        console.log(event, eventId,allEvents)
+
         if (!event) throw new BadRequestError("Invalid Event!")
 
         let user = await this.dbUser.findOne({

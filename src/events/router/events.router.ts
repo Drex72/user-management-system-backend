@@ -1,7 +1,7 @@
 import { ControlBuilder } from "@/core/middlewares/controlBuilder"
 import { Router } from "express"
 import { createEvent, rsvpEvent } from "../services"
-import { createEventSchema } from "./schema"
+import { createEventSchema, rsvpEventSchema } from "./schema"
 
 export const eventsRouter = Router()
 
@@ -22,5 +22,6 @@ eventsRouter.post(
   '/rsvp',
   ControlBuilder.builder()
   .setHandler(rsvpEvent.handle)
+  .setValidator(rsvpEventSchema)
   .handle()
 )

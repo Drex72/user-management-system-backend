@@ -66,7 +66,7 @@ EventAttendance.init(
         },
         entryTime: {
             type: DataTypes.TIME,
-            allowNull: false,
+            allowNull: true,
             comment: "Time of the event",
         },
     },
