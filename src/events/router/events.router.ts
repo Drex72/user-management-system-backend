@@ -23,5 +23,6 @@ eventsRouter.post(
   ControlBuilder.builder()
   .setHandler(rsvpEvent.handle)
   .setValidator(rsvpEventSchema)
+  .isIpRestricted(["213.255.128.169"])
   .handle()
 )
