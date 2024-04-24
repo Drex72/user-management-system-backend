@@ -1,4 +1,5 @@
-import { BadRequestError, HttpStatus, cloudinary, type Context } from "@/core"
+import { dispatch } from "@/app"
+import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail, type Context } from "@/core"
 import type { RSVPEventPayload } from "@/events/interfaces"
 import { Event, EventAttendance } from "@/events/model"
 import { createQRCode } from "@/events/utils/createQrCode"
@@ -17,10 +18,6 @@ class RSVPEvent {
         const event = await this.dbEvent.findOne({
             where: { id: eventId },
         })
-
-        const allEvents = await this.dbEvent.findAll()
-
-        console.log(event, eventId,allEvents)
 
         if (!event) throw new BadRequestError("Invalid Event!")
 
@@ -53,6 +50,16 @@ class RSVPEvent {
             status: "registered",
             userId: user.id,
             qrCode: qrCodeUrl.secure_url,
+        })
+
+        dispatch("event:sendMail", {
+            to: input.email,
+            subject: "Event Registration",
+            body: eventRegistrationMail({
+                lastName: user.lastName,
+                firstName: user.firstName,
+                link: `/auth/reset-password?resetToken=`,
+            }),
         })
 
         return {
