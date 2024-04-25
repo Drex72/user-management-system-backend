@@ -1,4 +1,5 @@
 import { BadRequestError, HttpStatus, UnAuthorizedError, config, imageUploadService, type Context } from "@/core"
+import { BadRequestError, HttpStatus, UnAuthorizedError, config, imageUploadService, type Context } from "@/core"
 import type { UpdateEventPayload } from "@/events/interfaces"
 import { Event } from "@/events/model"
 

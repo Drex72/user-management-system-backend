@@ -19,6 +19,7 @@ export const AppMessages = {
         PASSWORD_RESET: "Password reset successfully",
         TOKEN_REFRESHED: "Token Refreshed Successfully",
         DATA_FETCHED: "Data Retreived Successfully",
+        BULK_CREATE_SUCCESS : "Bulk user creation done successfully"
 
     },
     INFO: {
