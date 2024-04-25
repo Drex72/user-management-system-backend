@@ -1,5 +1,5 @@
 import { dispatch } from "@/app"
-import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail, type Context } from "@/core"
+import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail2, type Context } from "@/core"
 import type { RSVPEventPayload } from "@/events/interfaces"
 import { Event, EventAttendance } from "@/events/model"
 import { createQRCode } from "@/events/utils/createQrCode"
@@ -52,13 +52,28 @@ class RSVPEvent {
             qrCode: qrCodeUrl.secure_url,
         })
 
+        // dispatch("event:sendMail", {
+        //     to: input.email,
+        //     subject: "Event Registration",
+        //     body: eventRegistrationMail({
+        //         lastName: user.lastName,
+        //         firstName: user.firstName,
+        //         link: `/auth/reset-password?resetToken=`,
+        //     }),
+        // })
+
         dispatch("event:sendMail", {
             to: input.email,
             subject: "Event Registration",
-            body: eventRegistrationMail({
+            body: eventRegistrationMail2({
                 lastName: user.lastName,
                 firstName: user.firstName,
-                link: `/auth/reset-password?resetToken=`,
+                eventPhoto:"https://i.ibb.co/58gnFHY/entrepreneurevents-copy-4x-1-4.png",
+                eventDate: "April 25, 2024",
+                eventTime: "10:00 AM to 5:00 PM",
+                eventLocation: "International Tech Convention Center, 45 Tech Park Blvd, San Francisco, CA.",
+                eventName: "Event 1",
+                qrCode: qrCodeUrl.secure_url,
             }),
         })
 
