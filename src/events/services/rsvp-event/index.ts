@@ -1,8 +1,11 @@
 import { dispatch } from "@/app"
+import { encryptor } from "@/auth/helpers/encryptor"
 import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail2, type Context } from "@/core"
 import type { RSVPEventPayload } from "@/events/interfaces"
 import { Event, EventAttendance } from "@/events/model"
 import { createQRCode } from "@/events/utils/createQrCode"
+import { formatDate } from "@/events/utils/formatDate"
+import { formatTime } from "@/events/utils/formatTime"
 import { User } from "@/users/model"
 
 class RSVPEvent {
@@ -33,12 +36,25 @@ class RSVPEvent {
             })
         }
 
-        const qrCode = await createQRCode(
+        const existingRegisteredUser = await this.dbEventAttendance.findOne({
+            where: {
+                userId: user.id,
+                eventId: event.id,
+            },
+        })
+
+        if (existingRegisteredUser) {
+            throw new BadRequestError("You have already registered for this event!")
+        }
+
+        const encryptedQrCodePayload = encryptor.encrypt(
             JSON.stringify({
                 userId: user.id,
                 eventId,
             }),
         )
+
+        const qrCode = await createQRCode(encryptedQrCodePayload)
 
         // Upload to Cloudinary
         const qrCodeUrl = await cloudinary.uploader.upload(qrCode, {
@@ -52,27 +68,17 @@ class RSVPEvent {
             qrCode: qrCodeUrl.secure_url,
         })
 
-        // dispatch("event:sendMail", {
-        //     to: input.email,
-        //     subject: "Event Registration",
-        //     body: eventRegistrationMail({
-        //         lastName: user.lastName,
-        //         firstName: user.firstName,
-        //         link: `/auth/reset-password?resetToken=`,
-        //     }),
-        // })
-
         dispatch("event:sendMail", {
             to: input.email,
             subject: "Event Registration",
             body: eventRegistrationMail2({
                 lastName: user.lastName,
                 firstName: user.firstName,
-                eventPhoto:"https://i.ibb.co/58gnFHY/entrepreneurevents-copy-4x-1-4.png",
-                eventDate: "April 25, 2024",
-                eventTime: "10:00 AM to 5:00 PM",
-                eventLocation: "International Tech Convention Center, 45 Tech Park Blvd, San Francisco, CA.",
-                eventName: "Event 1",
+                eventPhoto: event.photo,
+                eventDate: formatDate(event.date as any),
+                eventTime: formatTime(event.time),
+                eventLocation: "International Tech Convention Center, 45 Tech Park Blvd, San Francisco, CA",
+                eventName: event.name,
                 qrCode: qrCodeUrl.secure_url,
             }),
         })

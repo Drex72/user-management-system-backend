@@ -14,7 +14,7 @@ class CreateEvent {
             where: { name },
         })
 
-        if (event) throw new BadRequestError("Event Exists!")
+        if (event) throw new BadRequestError(`Event with name ${name} already exists`)
 
         const uploadedImage = await imageUploadService.imageUpload(config.cloudinary.assetsFolder, files.coverPhoto)
 
