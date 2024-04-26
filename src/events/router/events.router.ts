@@ -34,6 +34,11 @@ eventsRouter
         .setHandler(eventRegistered.handle)
         .handle(),
     )
+    .get(
+      ControlBuilder.builder()
+      .setHandler(eventAttendees.handle)
+      .setValidator(attendEventSchema)
+    )
 
 
 
