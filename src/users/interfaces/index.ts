@@ -21,12 +21,8 @@ type SingleUserPayload = {
     roleIds: string[]
 }
 
-interface BulkUserPayload extends ContextTypes {
-    users: SingleUserPayload[];
-}
-
 export interface SingleOrBulkUserPayload extends ContextTypes {
-    input: SingleUserPayload | BulkUserPayload;
+    input: SingleUserPayload | SingleUserPayload[];
 }
 
 export interface CreateDepartmentPayload extends ContextTypes {
