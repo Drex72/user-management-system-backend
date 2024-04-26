@@ -16,5 +16,5 @@ process.on("uncaughtException", (error: unknown) => {
 // Process-wide error handling for unhandled promise rejections
 process.on("unhandledRejection", (error: unknown) => {
     logger.info("Unhandled rejection", error) // Log the unhandled promise rejection details
-    process.exit(1) // Exit the process with a status code of 1 indicating failure
+    process.exit(1) // Exit the process
 })
