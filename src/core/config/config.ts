@@ -18,6 +18,10 @@ const envSchema = Joi.object()
         REFRESH_TOKEN_EXP: Joi.string().required(),
         ENCRYPTOR_SECRET_KEY: Joi.string().required(),
 
+        CLOUDINARY_NAME: Joi.string().required(),
+        CLOUDINARY_API_KEY: Joi.string().required(),
+        CLOUDINARY_API_SECRET: Joi.string().required(),
+
         DATABASE_NAME: Joi.string().required(),
         DATABASE_HOST: Joi.string().required(),
         DATABASE_USER: Joi.string().required(),
@@ -44,7 +48,6 @@ const envSchema = Joi.object()
             then: Joi.string().required(),
             otherwise: Joi.optional(),
         }),
-
     })
     .unknown()
 
@@ -75,6 +78,13 @@ export const config = Object.freeze({
         dbHost: validatedEnvVars.DATABASE_HOST,
         dbName: validatedEnvVars.DATABASE_NAME,
         dbType: validatedEnvVars.DATABASE_TYPE as Dialect,
+    },
+
+    cloudinary: {
+        cloudName: validatedEnvVars.CLOUDINARY_NAME,
+        apiKey: validatedEnvVars.CLOUDINARY_API_KEY,
+        apiSecret: validatedEnvVars.CLOUDINARY_API_SECRET,
+        assetsFolder: "NITPROFILE_ASSETS",
     },
 
     sendGrid: {

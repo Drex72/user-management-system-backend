@@ -21,6 +21,9 @@ export type ControllerHandlerOptions = {
 
     // Permissions take priority over roles
     allowedPermission?: string
+    
+    // White Listed Ip addresses allowed to access the handler
+    whitelistedIp?: string[]
 }
 
 /**

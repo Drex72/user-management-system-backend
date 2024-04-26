@@ -1,4 +1,4 @@
-import { config, logger } from "@/core"
+import { config, logger, sendEmail } from "@/core"
 
 /**
  * Event Listener Registry.
@@ -10,4 +10,6 @@ export const register = {
     },
     "cache:connection:established": () => logger.info(`Cache connection established`),
     "event:registeration:succesful": () => logger.info("Events listeners registered"),
+    "event:sendMail": sendEmail,
+
 }

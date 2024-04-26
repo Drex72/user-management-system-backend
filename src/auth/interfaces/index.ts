@@ -2,12 +2,10 @@ import type { ContextTypes, ITokenSignedPayload } from "@/core"
 
 export interface UserPayload {
     firstName: string
-    otherName?: string
     lastName: string
     email: string
     password: string
     phoneNumber?:string
-    isVerified?: boolean
     roleIds:string[]
 }
 

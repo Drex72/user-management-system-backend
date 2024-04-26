@@ -36,6 +36,8 @@ app.use(express.urlencoded({ extended: false }));
 // Mount the API routes under '/api/v1'. All routes inside appRouter will be prefixed with '/api/v1'.
 app.use("/api/v1", appRouter);
 
+app.set('trust proxy', true)
+
 // Use a custom middleware for handling 404 errors when no other route matches.
 app.use(notFoundHandler.handle);
 

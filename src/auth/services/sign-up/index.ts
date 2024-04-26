@@ -1,12 +1,12 @@
 import type { SignUpPayload } from "@/auth/interfaces"
-import { UserRoles } from "@/auth/model"
+import { Auth, UserRoles } from "@/auth/model"
 import { BadRequestError, HttpStatus, hashData, logger, sequelize, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
 import { User } from "@/users/model"
 import { Op } from "sequelize"
 
 class SignUp {
-    constructor(private readonly dbUser: typeof User, private readonly dbUserRoles: typeof UserRoles) {}
+    constructor(private readonly dbAuth: typeof Auth, private readonly dbUser: typeof User, private readonly dbUserRoles: typeof UserRoles) {}
 
     handle = async ({ input }: Context<SignUpPayload>) => {
         const { email, password, phoneNumber, roleIds } = input
@@ -18,7 +18,7 @@ class SignUp {
             conditions.push({ phoneNumber: phoneNumber })
         }
 
-        const userExists = await this.dbUser.findOne({
+        const userExists = await this.dbAuth.findOne({
             where: {
                 [Op.or]: conditions,
             },
@@ -33,7 +33,16 @@ class SignUp {
 
         try {
             // Create the User
-            const newUser = await this.dbUser.create({ ...input, password: hashPassword }, { transaction: dbTransaction })
+
+            const newUser = await this.dbUser.create(
+                {
+                    email,
+                    firstName: input.firstName,
+                    lastName: input.lastName,
+                },
+                { transaction: dbTransaction },
+            )
+            await this.dbAuth.create({ email, userId: newUser.id, password: hashPassword }, { transaction: dbTransaction })
 
             // Create payload for bulk insertion
             const payload = roleIds.map((roleId) => ({
@@ -64,4 +73,4 @@ class SignUp {
     }
 }
 
-export const signUp = new SignUp(User, UserRoles)
+export const signUp = new SignUp(Auth, User, UserRoles)

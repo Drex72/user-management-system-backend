@@ -1,1 +1,1 @@
-export const view = ""
+export * from './eventRegistrationView'
