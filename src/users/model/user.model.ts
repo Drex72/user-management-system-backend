@@ -10,12 +10,8 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare lastName: string
     declare email: string
     declare phoneNumber: CreationOptional<string>
-    declare password: CreationOptional<string>
     declare emailVerified: CreationOptional<boolean>
     declare phoneNumberVerified: CreationOptional<boolean>
-    declare refreshToken: CreationOptional<string>
-    declare refreshTokenExp: CreationOptional<Date>
-    declare isVerified: CreationOptional<boolean>
 
     public readonly roles?: Role[]
 }
@@ -35,10 +31,6 @@ User.init(
         lastName: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: true,
         },
         email: {
             type: DataTypes.STRING,
@@ -60,33 +52,9 @@ User.init(
             defaultValue: false,
             allowNull: false,
         },
-        refreshToken: {
-            type: DataTypes.STRING(600),
-            allowNull: true,
-        },
-        refreshTokenExp: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        isVerified: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
     },
 
     {
-        scopes: {
-            withPassword: {
-                attributes: {
-                    include: ["password"],
-                },
-            },
-            withRefreshToken: {
-                attributes: {
-                    include: ["refreshToken", "refreshTokenExp"],
-                },
-            },
-        },
         indexes: [
             {
                 unique: true,

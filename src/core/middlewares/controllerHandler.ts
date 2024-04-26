@@ -63,6 +63,13 @@ export class ControllerHandler {
     handle = (controllerFn: AnyFunction, schema: ValidationSchema | undefined = {}, options: ControllerHandlerOptions): ExpressCallbackFunction => {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
+                // Check if Ip is allowed
+                if (options.whitelistedIp?.length) {
+                    if (!req.ip || options.whitelistedIp.includes(req.ip)) {
+                        throw new ForbiddenError("Ip is not allowed")
+                    }
+                }
+
                 // Authenticate the request if required.
                 if (options.isPrivate || options.isPrivateAndPublic) {
                     await this.authenticateRequest({

@@ -2,9 +2,10 @@ import type { SignOutPayload } from "@/auth/interfaces"
 import { User } from "@/users/model"
 import { HttpStatus, type Context } from "@/core"
 import { AppMessages } from "@/core//common"
+import { Auth } from "@/auth/model"
 
 class SignOut {
-    constructor(private readonly dbUsers: typeof User) {}
+    constructor(private readonly dbAuth: typeof Auth) {}
 
     /**
      * @description Destroys user session
@@ -12,7 +13,7 @@ class SignOut {
      * @returns { code: string, message: string } response
      */
     public handle = async ({ user }: Context<SignOutPayload>) => {
-        await this.dbUsers.update({ refreshToken: "", refreshTokenExp: undefined }, { where: { id: user.id } })
+        await this.dbAuth.update({ refreshToken: "", refreshTokenExp: undefined }, { where: { id: user.id } })
 
         return {
             code: HttpStatus.NO_CONTENT,
@@ -24,4 +25,4 @@ class SignOut {
     }
 }
 
-export const signOut = new SignOut(User)
+export const signOut = new SignOut(Auth)

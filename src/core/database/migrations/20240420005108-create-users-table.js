@@ -28,10 +28,7 @@ module.exports = {
                 unique: true,
                 type: Sequelize.STRING,
             },
-            password: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
+
             emailVerified: {
                 allowNull: false,
                 defaultValue: false,
@@ -41,18 +38,6 @@ module.exports = {
                 allowNull: false,
                 defaultValue: false,
                 type: Sequelize.BOOLEAN,
-            },
-            refreshToken: {
-                type: Sequelize.STRING(600),
-                allowNull: true,
-            },
-            refreshTokenExp: {
-                type: Sequelize.DATE,
-                allowNull: true,
-            },
-            isVerified: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: false,
             },
             createdAt: {
                 type: Sequelize.DATE,

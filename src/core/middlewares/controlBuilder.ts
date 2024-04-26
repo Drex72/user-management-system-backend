@@ -64,6 +64,16 @@ export class ControlBuilder {
     }
 
     /**
+     * Marks the route as accessible only if the Ip address of the user is part of the whitelisted ip's
+     * @returns {ControlBuilder} The instance of this builder for chaining.
+     */
+    isIpRestricted(whitelistedIp: string[]) {
+        this.options = { ...this.options, whitelistedIp }
+
+        return this
+    }
+
+    /**
      * Specifies Permissions allowed to access the route. Automatically marks the route as private.
      * @param {...string[]} allowed - An array of allowed permissions.
      * @returns {ControlBuilder} The instance of this builder for chaining.
