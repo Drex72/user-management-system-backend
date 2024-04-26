@@ -1,6 +1,6 @@
 import { dispatch } from "@/app"
 import { encryptor } from "@/auth/helpers/encryptor"
-import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail2, type Context } from "@/core"
+import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail, eventRegistrationMail2, type Context } from "@/core"
 import type { RSVPEventPayload } from "@/events/interfaces"
 import { Event, EventAttendance } from "@/events/model"
 import { createQRCode } from "@/events/utils/createQrCode"
@@ -77,7 +77,7 @@ class RSVPEvent {
                 eventPhoto: event.photo,
                 eventDate: formatDate(event.date as any),
                 eventTime: formatTime(event.time),
-                eventLocation: "International Tech Convention Center, 45 Tech Park Blvd, San Francisco, CA",
+                eventLocation: "NITDA IT Hub, 6 Commercial Rd, University Of Lagos, Lagos 101245, Lagos",
                 eventName: event.name,
                 qrCode: qrCodeUrl.secure_url,
             }),
