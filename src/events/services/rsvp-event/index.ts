@@ -1,6 +1,6 @@
 import { dispatch } from "@/app"
 import { encryptor } from "@/auth/helpers/encryptor"
-import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail, eventRegistrationMail2, type Context } from "@/core"
+import { BadRequestError, HttpStatus, cloudinary, eventRegistrationMail2, type Context } from "@/core"
 import type { RSVPEventPayload } from "@/events/interfaces"
 import { Event, EventAttendance } from "@/events/model"
 import { createQRCode } from "@/events/utils/createQrCode"
@@ -23,6 +23,16 @@ class RSVPEvent {
         })
 
         if (!event) throw new BadRequestError("Invalid Event!")
+
+        if (event.limit) {
+            const eventAttendees = await this.dbEventAttendance.findAll({
+                where: {
+                    eventId: eventId,
+                },
+            })
+
+            if (eventAttendees.length === event.limit) throw new BadRequestError("Event Limit has been exceeded!")
+        }
 
         let user = await this.dbUser.findOne({
             where: {
