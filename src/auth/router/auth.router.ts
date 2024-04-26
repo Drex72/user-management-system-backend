@@ -9,7 +9,7 @@ import { assignPermissionSchema, nameSchema, signInSchema, signUpSchema } from "
 export const authRouter = Router()
 
 authRouter.post(
-    "/sign-up", 
+    "/sign-up",
     ControlBuilder.builder()
     .setHandler(signUp.handle)
     .setValidator(signUpSchema)
@@ -17,7 +17,7 @@ authRouter.post(
 )
 
 authRouter.post(
-    "/sign-in", 
+    "/sign-in",
     ControlBuilder.builder()
     .setValidator(signInSchema)
     .setHandler(signIn.handle)
@@ -25,7 +25,7 @@ authRouter.post(
 )
 
 authRouter.post(
-    "/sign-out", 
+    "/sign-out",
     ControlBuilder.builder()
     .setHandler(signOut.handle)
     .isPrivate()
@@ -68,11 +68,3 @@ authRouter.post(
   .handle(),
 
 )
-
-
-
-
-
-
-
-

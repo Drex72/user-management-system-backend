@@ -60,3 +60,10 @@ export const rsvpEventSchema: ValidationSchema = {
         eventId: Joi.string().length(36).required(),
     }),
 }
+
+export const attendEventSchema: ValidationSchema = {
+    querySchema: Joi.object({
+        eventId: Joi.string().length(36).required(),
+        userId: Joi.string().length(36).required().optional(),
+    }),
+}
