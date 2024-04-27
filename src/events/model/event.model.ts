@@ -1,4 +1,5 @@
 import { sequelize } from "@/core"
+import { User } from "@/users/model"
 import { DataTypes, Model, UUIDV4, type CreationOptional, type InferAttributes, type InferCreationAttributes } from "sequelize"
 
 export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
@@ -7,9 +8,10 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
     declare description: string
     declare photo: CreationOptional<string>
     declare limit: CreationOptional<number>
-    declare inviteLink: string
     declare date: Date
     declare time: string
+    declare inviteLink: string
+    declare clientId: CreationOptional<string>
 }
 
 Event.init(
@@ -64,6 +66,17 @@ Event.init(
             allowNull: false,
             comment: "Time of the event",
         },
+        clientId: {
+            type: DataTypes.UUID,
+            allowNull: true,
+
+            references: {
+                model: User,
+                key: "id",
+            },
+
+            comment: "Organization ID of the Organization",
+        }
     },
     {
         modelName: "events",

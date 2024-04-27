@@ -1,67 +1,34 @@
 import type { SignUpPayload } from "@/auth/interfaces"
-import { Auth, UserRoles } from "@/auth/model"
-import { BadRequestError, HttpStatus, hashData, logger, sequelize, type Context } from "@/core"
+import { Auth } from "@/auth/model"
+import { HttpStatus, hashData, logger, sequelize, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
-import { User } from "@/users/model"
-import { Op } from "sequelize"
+import { createUser } from "@/users/helpers"
 
 class SignUp {
-    constructor(private readonly dbAuth: typeof Auth, private readonly dbUser: typeof User, private readonly dbUserRoles: typeof UserRoles) {}
+    constructor(private readonly dbAuth: typeof Auth) {}
 
     handle = async ({ input }: Context<SignUpPayload>) => {
-        const { email, password, phoneNumber, roleIds } = input
+        const dbTransaction = await sequelize.transaction()
 
-        const conditions: Record<string, string>[] = [{ email: email }]
-
-        // Only add phone number to the search conditions if it is provided
-        if (phoneNumber) {
-            conditions.push({ phoneNumber: phoneNumber })
-        }
-
-        const userExists = await this.dbAuth.findOne({
-            where: {
-                [Op.or]: conditions,
-            },
-        })
-
-        if (userExists) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+        const { email, password } = input
 
         // Hash the Password
         const hashPassword = await hashData(password)
 
-        const dbTransaction = await sequelize.transaction()
-
         try {
             // Create the User
+            const createdUser = await createUser.handle(input, dbTransaction)
 
-            const newUser = await this.dbUser.create(
-                {
-                    email,
-                    firstName: input.firstName,
-                    lastName: input.lastName,
-                },
-                { transaction: dbTransaction },
-            )
-            await this.dbAuth.create({ email, userId: newUser.id, password: hashPassword }, { transaction: dbTransaction })
+            await this.dbAuth.create({ email, userId: createdUser.id, password: hashPassword }, { transaction: dbTransaction })
 
-            // Create payload for bulk insertion
-            const payload = roleIds.map((roleId) => ({
-                userId: newUser.id,
-                roleId,
-                active: true,
-            }))
-
-            // Bulk create user permissions
-            await this.dbUserRoles.bulkCreate(payload, { transaction: dbTransaction })
-
-            logger.info(`User with ID ${newUser.id} created successfully`)
+            logger.info(`User with ID ${createdUser.id} created successfully`)
 
             await dbTransaction.commit()
 
             return {
                 code: HttpStatus.OK,
                 message: AppMessages.SUCCESS.ACCOUNT_CREATED,
-                data: newUser,
+                data: createdUser,
             }
         } catch (error: any) {
             dbTransaction.rollback()
@@ -73,4 +40,4 @@ class SignUp {
     }
 }
 
-export const signUp = new SignUp(Auth, User, UserRoles)
+export const signUp = new SignUp(Auth)
