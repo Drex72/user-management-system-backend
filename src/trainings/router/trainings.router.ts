@@ -1,6 +1,7 @@
 import { ControlBuilder } from "@/core/middlewares/controlBuilder"
 import { Router } from "express"
 import { createTraining, createTrainingStudent, createTrainingStudents, updateTraining, viewTrainingStudents, viewTrainings } from "../services"
+import { createBulkTrainingStudentsSchema, createTrainingSchema, createTrainingStudentsSchema, getTrainingStudentsSchema, updateTrainingSchema } from "./schema"
 
 export const trainingsRouter = Router()
 
@@ -10,6 +11,7 @@ trainingsRouter
     .post(
         ControlBuilder.builder()
             .setHandler(createTraining.handle)
+            .setValidator(createTrainingSchema)
             .handle()
     )
     .get(
@@ -20,6 +22,7 @@ trainingsRouter
     .patch(
         ControlBuilder.builder()
             .setHandler(updateTraining.handle)
+            .setValidator(updateTrainingSchema)
             .handle()
     )
 
@@ -28,11 +31,13 @@ trainingsRouter
     .post(
         ControlBuilder.builder()
             .setHandler(createTrainingStudent.handle)
+            .setValidator(createTrainingStudentsSchema)
             .handle()
     )
     .get(
         ControlBuilder.builder()
         .setHandler(viewTrainingStudents.handle)
+        .setValidator(getTrainingStudentsSchema)
         .handle()
     )
 
@@ -41,6 +46,7 @@ trainingsRouter
         "/students/bulk",
         ControlBuilder.builder()
             .setHandler(createTrainingStudents.handle)
+            .setValidator(createBulkTrainingStudentsSchema)
             .handle()
     )
 
