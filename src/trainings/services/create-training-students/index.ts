@@ -1,7 +1,9 @@
 import { BadRequestError, ForbiddenError, HttpStatus, Joi, logger, sequelize, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
+import { CreateTrainingStudentsPayload } from "@/trainings/interfaces"
+import { Training, TrainingStudents } from "@/trainings/model"
 import { createUser } from "@/users/helpers"
-import { BaseUserPayload, CreateBulkUsersPayload } from "@/users/interfaces"
+import { BaseUserPayload } from "@/users/interfaces"
 import csvToJson from "convert-csv-to-json"
 
 const csvSchema = Joi.object({
@@ -11,11 +13,19 @@ const csvSchema = Joi.object({
     phoneNumber: Joi.string().trim().optional(),
 })
 
-class CreateUsers {
-    constructor() {}
+class CreateTrainingStudents {
+    constructor(private readonly dbTraining: typeof Training, private readonly dbTrainingStudents: typeof TrainingStudents) {}
 
-    handle = async ({ files, query }: Context<CreateBulkUsersPayload>) => {
+    handle = async ({ files, query }: Context<CreateTrainingStudentsPayload>) => {
         if (!files || !files.csv || Array.isArray(files.csv)) throw new ForbiddenError("csv is required")
+
+        const training = await this.dbTraining.findOne({
+            where: {
+                id: query.trainingId,
+            },
+        })
+
+        if (!training) throw new BadRequestError("Training not found")
 
         const convertedJson = (await csvToJson.fieldDelimiter(",").getJsonFromCsv(files.csv.tempFilePath)) as Omit<BaseUserPayload, "roleIds">[]
 
@@ -29,11 +39,17 @@ class CreateUsers {
 
                 if (value.error) throw new BadRequestError(`Invalid User ${JSON.stringify(userData)}`)
 
-                const createdUser = await createUser.handle({ ...userData, roleIds: [query.roleId] }, dbTransaction)
+                const { newUser } = await createUser.handle(userData, dbTransaction)
 
-                if (!createdUser.newUserCreated) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+                await this.dbTrainingStudents.create(
+                    {
+                        userId: newUser.id,
+                        trainingId: query.trainingId,
+                    },
+                    { transaction: dbTransaction },
+                )
 
-                createdUsers.push(createdUser.newUser)
+                createdUsers.push(newUser)
             }
 
             await dbTransaction.commit()
@@ -53,4 +69,4 @@ class CreateUsers {
     }
 }
 
-export const createBulkUsers = new CreateUsers()
+export const createTrainingStudents = new CreateTrainingStudents(Training, TrainingStudents)

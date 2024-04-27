@@ -1,6 +1,5 @@
 import { UserRoles } from "@/auth/model"
-import { BadRequestError, logger } from "@/core"
-import { AppMessages } from "@/core/common"
+import { logger } from "@/core"
 import { BaseUserPayload } from "@/users/interfaces"
 import { User } from "@/users/model"
 import { Op, Transaction } from "sequelize"
@@ -24,30 +23,38 @@ class CreateUser {
             },
         })
 
-        if (userExists) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+        let newUserCreated = false
 
-        // Create the User
-        const newUser = await this.dbUser.create(
-            {
-                email,
-                firstName: input.firstName,
-                lastName: input.lastName,
-            },
-            { transaction },
-        )
+        let newUser: User | undefined = undefined
 
-        const payload = roleIds.map((roleId) => ({
-            userId: newUser.id,
-            roleId,
-            active: true,
-        }))
+        if (!userExists) {
+            // Create the User
+            newUser = await this.dbUser.create(
+                {
+                    email,
+                    firstName: input.firstName,
+                    lastName: input.lastName,
+                },
+                { transaction },
+            )
 
-        // Bulk create user permissions
-        await this.dbUserRoles.bulkCreate(payload, { transaction })
+            const payload = roleIds.map((roleId) => ({
+                userId: newUser!.id,
+                roleId,
+                active: true,
+            }))
 
-        logger.info(`User with ID ${newUser.id} created successfully`)
+            // Bulk create user permissions
+            await this.dbUserRoles.bulkCreate(payload, { transaction })
 
-        return newUser
+            logger.info(`User with ID ${newUser.id} created successfully`)
+
+            newUserCreated = true
+        }else {
+            newUser = userExists
+        }
+
+        return { newUser, newUserCreated }
     }
 }
 

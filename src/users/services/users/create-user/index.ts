@@ -1,4 +1,5 @@
-import { HttpStatus, type Context } from "@/core"
+import { BadRequestError, HttpStatus, type Context } from "@/core"
+import { AppMessages } from "@/core/common"
 import { createUser } from "@/users/helpers"
 import { CreateNewUserPayload } from "@/users/interfaces"
 
@@ -7,6 +8,8 @@ class CreateUser {
 
     handle = async ({ input }: Context<CreateNewUserPayload>) => {
         const createdUser = await createUser.handle(input)
+
+        if (!createdUser.newUserCreated) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
 
         return {
             code: HttpStatus.CREATED,

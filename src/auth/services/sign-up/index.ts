@@ -1,6 +1,6 @@
 import type { SignUpPayload } from "@/auth/interfaces"
 import { Auth } from "@/auth/model"
-import { HttpStatus, hashData, logger, sequelize, type Context } from "@/core"
+import { BadRequestError, HttpStatus, hashData, logger, sequelize, type Context } from "@/core"
 import { AppMessages } from "@/core/common"
 import { createUser } from "@/users/helpers"
 
@@ -19,9 +19,11 @@ class SignUp {
             // Create the User
             const createdUser = await createUser.handle(input, dbTransaction)
 
-            await this.dbAuth.create({ email, userId: createdUser.id, password: hashPassword }, { transaction: dbTransaction })
+            if (!createdUser.newUserCreated) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
 
-            logger.info(`User with ID ${createdUser.id} created successfully`)
+            await this.dbAuth.create({ email, userId: createdUser.newUser.id, password: hashPassword }, { transaction: dbTransaction })
+
+            logger.info(`User with ID ${createdUser.newUser.id} created successfully`)
 
             await dbTransaction.commit()
 
