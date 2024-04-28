@@ -18,8 +18,8 @@ module.exports = {
             underscored: true,
         },
         dialect: "postgres",
-        ssl: true,
-        dialectOptions: { ssl: { require: true } },
+        // ssl: true,
+        // dialectOptions: { ssl: { require: true } },
     },
 
     production: {
@@ -37,7 +37,7 @@ module.exports = {
             underscored: true,
         },
         dialect: "postgres",
-        ssl: true,
-        dialectOptions: { ssl: { require: true } },
+        // ssl: true,
+        // dialectOptions: { ssl: { require: true } },
     },
 }
