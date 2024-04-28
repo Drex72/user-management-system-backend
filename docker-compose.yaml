@@ -14,17 +14,25 @@ services:
         depends_on:
             - db
 
-    db:
+    nit_db:
         image: postgres
         restart: always
         env_file: ./.env
+        container_name: nit_db
         ports:
-            - "5435:5432"
+            - "5434:5432"
         environment:
             PGDATA: /var/lib/postgresql/data/pgdata
             POSTGRES_USER: root
             POSTGRES_PASSWORD: rootpassword
             POSTGRES_DB: nithub_management_system_db
+
+    adminer:
+        image: adminer
+        container_name: adminer
+        restart: always
+        ports:
+            - "8081:8080"  # Port changed to avoid conflict
 
 networks:
   default:
