@@ -18,7 +18,7 @@ module.exports = {
             },
             userId: {
                 type: Sequelize.UUID,
-                allowNull: true,
+                allowNull: false,
 
                 references: {
                     model: "users",
@@ -30,7 +30,7 @@ module.exports = {
 
             eventId: {
                 type: Sequelize.UUID,
-                allowNull: true,
+                allowNull: false,
 
                 references: {
                     model: "events",

@@ -64,7 +64,7 @@ class RSVPEvent {
             }),
         )
 
-        const qrCode = await createQRCode(encryptedQrCodePayload)
+        const qrCode = await createQRCode(`https://link.com/attend-event?token=${encryptedQrCodePayload}`)
 
         // Upload to Cloudinary
         const qrCodeUrl = await cloudinary.uploader.upload(qrCode, {

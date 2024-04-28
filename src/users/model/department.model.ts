@@ -3,7 +3,7 @@ import { DataTypes, Model, UUIDV4, type CreationOptional, type InferAttributes, 
 
 export class Department extends Model<InferAttributes<Department>, InferCreationAttributes<Department>> {
     declare id: CreationOptional<string>
-    declare departmentName: string
+    declare name: string
 }
 
 Department.init(
@@ -12,24 +12,18 @@ Department.init(
             type: DataTypes.UUID,
             allowNull: true,
             primaryKey: true,
-            defaultValue: UUIDV4
+            defaultValue: UUIDV4,
         },
-        departmentName: {
+        name: {
             type: DataTypes.STRING,
-            allowNull: false
-        }
+            allowNull: false,
+        },
     },
     {
-        indexes: [
-            {
-                unique: true,
-                fields: ["id"]
-            }
-        ],
         modelName: "departments",
         tableName: "departments",
         sequelize,
         timestamps: true,
-        freezeTableName: true
-    }
+        freezeTableName: true,
+    },
 )

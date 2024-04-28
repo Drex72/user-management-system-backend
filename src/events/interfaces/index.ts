@@ -6,7 +6,11 @@ type EventPayload = {
     limit?: number
     date: Date
     time: string
+    creatorId?: string
+    creatorType?: EventCreatorType
 }
+
+export type EventCreatorType = "user" | "organization"
 
 export interface CreateEventPayload extends ContextTypes {
     input: EventPayload
@@ -38,5 +42,16 @@ export interface RSVPEventPayload extends ContextTypes {
 
     query: {
         eventId: string
+    }
+}
+
+export type ParsedTokenPayload = {
+    eventId: string
+    userId: string
+}
+
+export interface AttendEventPayload extends ContextTypes {
+    input: {
+        token: string
     }
 }

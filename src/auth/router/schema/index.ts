@@ -28,7 +28,7 @@ export const nameSchema: ValidationSchema = {
 
 export const assignPermissionSchema: ValidationSchema = {
     inputSchema: Joi.object({
-        permissionIds: Joi.array().items(Joi.string()).required(),
+        permissionIds: Joi.array().items(Joi.string().length(36).trim()).min(1).required(),
     }),
 
     querySchema: Joi.object({

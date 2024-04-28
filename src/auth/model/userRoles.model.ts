@@ -20,7 +20,7 @@ UserRoles.init(
         },
         roleId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: Role,
@@ -30,7 +30,7 @@ UserRoles.init(
 
         userId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: User,
@@ -52,3 +52,7 @@ UserRoles.init(
         freezeTableName: true,
     },
 )
+
+
+User.belongsToMany(Role, { through: UserRoles })
+Role.belongsToMany(User, { through: UserRoles })

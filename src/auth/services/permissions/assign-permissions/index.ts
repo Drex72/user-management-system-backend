@@ -56,13 +56,23 @@ class AssignPermissions {
             permissionId,
         }))
 
-        // Bulk create user permissions
-        const response = await this.dbRolePermissions.bulkCreate(payload)
+        try {
+            // Bulk create user permissions
+            const response = await this.dbRolePermissions.bulkCreate(payload)
 
-        return {
-            code: HttpStatus.OK,
-            message: "Permissions Assigned Successfully",
-            data: response,
+            return {
+                code: HttpStatus.OK,
+                message: "Permissions Assigned Successfully",
+                data: response,
+            }
+        } catch (error:any) {
+            // If the error is due to duplicate entry, handle it gracefully.
+            if (error.name === "SequelizeUniqueConstraintError") {
+                throw new BadRequestError("Permission is already assigned to Role")
+            } else {
+                // If it's another type of error, re-throw it.
+                throw error
+            }
         }
     }
 

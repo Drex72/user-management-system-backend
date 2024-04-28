@@ -27,7 +27,7 @@ EventAttendance.init(
 
         userId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: User,
@@ -39,7 +39,7 @@ EventAttendance.init(
 
         eventId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: Event,
@@ -71,6 +71,9 @@ EventAttendance.init(
         },
     },
     {
+        defaultScope: {
+            include: [{ model: User, as: "user" }],
+        },
         modelName: "eventAttendance",
         tableName: "eventAttendance",
         sequelize,
@@ -78,3 +81,5 @@ EventAttendance.init(
         freezeTableName: true,
     },
 )
+
+EventAttendance.belongsTo(User, { foreignKey: "userId" })

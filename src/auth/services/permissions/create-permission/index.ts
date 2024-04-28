@@ -10,7 +10,7 @@ class CreatePermission {
 
         try {
             // Try to create the Permission. If it already exists, it will throw an error.
-            const newRole = await this.dbPermission.create({
+            const newPermission = await this.dbPermission.create({
                 name: name.toLocaleUpperCase(),
             })
 
@@ -19,12 +19,12 @@ class CreatePermission {
             return {
                 code: HttpStatus.OK,
                 message: "Permission Created Successfully",
-                data: newRole,
+                data: newPermission,
             }
         } catch (error: any) {
             // If the error is due to duplicate entry, handle it gracefully.
             if (error.name === "SequelizeUniqueConstraintError") {
-                throw new BadRequestError("Role Exists!")
+                throw new BadRequestError("Permission Exists!")
             } else {
                 // If it's another type of error, re-throw it.
                 throw error
