@@ -10,7 +10,6 @@ export class RolePermissions extends Model<InferAttributes<RolePermissions>, Inf
 
     public declare readonly role?: Role
     public declare readonly permission?: Permission
-
 }
 
 RolePermissions.init(
@@ -23,7 +22,7 @@ RolePermissions.init(
         },
         permissionId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: Permission,
@@ -33,7 +32,7 @@ RolePermissions.init(
 
         roleId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: Role,
@@ -55,3 +54,6 @@ RolePermissions.init(
         freezeTableName: true,
     },
 )
+
+Role.belongsToMany(Permission, { through: RolePermissions })
+Permission.belongsToMany(Role, { through: RolePermissions })

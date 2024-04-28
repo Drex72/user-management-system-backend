@@ -30,12 +30,16 @@ class SignUp {
             return {
                 code: HttpStatus.OK,
                 message: AppMessages.SUCCESS.ACCOUNT_CREATED,
-                data: createdUser,
+                data: createdUser.newUser,
             }
         } catch (error: any) {
             dbTransaction.rollback()
-
+            
             logger.error(error?.message || "Transaction failed, rolled back all operations")
+
+            if(error?.message === AppMessages.FAILURE.EMAIL_EXISTS) {
+                throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+            }
 
             throw new Error("Error while Signing Up. Please make sure Roles are correct and retry.")
         }

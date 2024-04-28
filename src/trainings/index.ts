@@ -1,1 +1,1 @@
-export * from './router/trainings.router.ts'
+export * from "./router/trainings.router"

@@ -1,34 +1,40 @@
+import { encryptor } from "@/auth/helpers/encryptor"
+import { BadRequestError, HttpStatus, type Context } from "@/core"
+import { AttendEventPayload, ParsedTokenPayload } from "@/events/interfaces"
+import { EventAttendance } from "@/events/model"
 
-import { BadRequestError, ForbiddenError, HttpStatus, config, imageUploadService, logger, sequelize, type Context } from "@/core"
-import { EventAttendance } from "./event.model"
+class AttendEvent {
+    constructor(private readonly dbEventAttendees: typeof EventAttendance) {}
 
+    handle = async ({ input }: Context<AttendEventPayload>) => {
+        const { token } = input
 
-class AttendEvent{
-    constructor(private readonly dbEvent: typeof EventAttendance) {}
+        const decryptedPayload = encryptor.decrypt(token)
 
-    handle = async ({ query }: Context<any>) => {
+        if (!decryptedPayload) throw new BadRequestError("Invalid token")
 
-        try {
-            const { eventId, userId } = query
+        const parsedPayload: ParsedTokenPayload = JSON.parse(decryptedPayload)
 
-            const event = await this.dbEvent.findOne({
-                where: { eventId, userId },
-            })
+        if (!parsedPayload?.eventId || !parsedPayload?.userId) throw new BadRequestError("Invalid token")
 
-            if (!event) throw new BadRequestError("Invalid Event!")
+        const { eventId, userId } = parsedPayload
 
-            await this.dbEvent.update({ status: "attended" }, { where: { eventId, userId } })
+        const eventAttendee = await this.dbEventAttendees.findOne({
+            where: { eventId, userId },
+        })
 
-            return {
-                code: HttpStatus.OK,
-                message: "Event Attended Successfully",
-            }
-        } catch (error) {
-            throw new Error("Error while attending event")
+        if (!eventAttendee) throw new BadRequestError("No record Found of User registered with Event!")
 
+        eventAttendee.status = "attended"
+
+        await eventAttendee.save()
+
+        return {
+            code: HttpStatus.OK,
+            message: "Event Attended Successfully",
+            data: eventAttendee,
         }
     }
 }
-
 
 export const attendEvent = new AttendEvent(EventAttendance)

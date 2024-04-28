@@ -45,7 +45,49 @@ export const createEventSchema: ValidationSchema = {
                 })
                 return errors
             }),
+        creatorId: Joi.string().length(36).trim().optional(),
+        creatorType: Joi.string().valid("user", "organization").trim().optional(),
     }),
+}
+
+export const updateEventSchema: ValidationSchema = {
+    inputSchema: Joi.object({
+        name: Joi.string().trim(),
+        description: Joi.string().trim(),
+        limit: Joi.number(),
+        date: Joi.date()
+            .iso()
+            .error((errors) => {
+                errors.forEach((err) => {
+                    switch (err.code) {
+                        case "date.format":
+                            err.message = "Invalid input format for Date. Please enter the date in the following format: YYYY-MM-DD."
+                            break
+                        default:
+                            break
+                    }
+                })
+                return errors
+            }),
+
+        time: Joi.string()
+            .trim()
+            .regex(/^([1-9]|0[1-9]|1[0-2]):[0-5][0-9] ([AaPp][Mm])$/)
+            .error((errors) => {
+                errors.forEach((err) => {
+                    switch (err.code) {
+                        case "string.pattern.base":
+                            err.message = "Invalid input format for time. Please enter the time in the following format: HH:MM AM/PM. "
+                            break
+                        default:
+                            break
+                    }
+                })
+                return errors
+            }),
+        creatorId: Joi.string().length(36).trim(),
+        creatorType: Joi.string().valid("user", "organization").trim(),
+    }).min(1),
 }
 
 export const rsvpEventSchema: ValidationSchema = {
@@ -62,8 +104,16 @@ export const rsvpEventSchema: ValidationSchema = {
 }
 
 export const attendEventSchema: ValidationSchema = {
-    querySchema: Joi.object({
-        eventId: Joi.string().length(36).required(),
-        userId: Joi.string().length(36).required().optional(),
+    inputSchema: Joi.object({
+        token: Joi.string().required().required(),
     }),
 }
+
+export const eventQuerySchema: ValidationSchema = {
+    querySchema: Joi.object({
+        eventId: Joi.string().length(36).required(),
+    }),
+}
+
+
+

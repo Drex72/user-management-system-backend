@@ -24,19 +24,22 @@ Auth.init(
             defaultValue: UUIDV4,
         },
 
-        password: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true,
         },
+
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+
         refreshToken: {
             type: DataTypes.STRING(600),
             allowNull: true,
         },
+        
         refreshTokenExp: {
             type: DataTypes.DATE,
             allowNull: true,
@@ -47,7 +50,7 @@ Auth.init(
         },
         userId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: User,
@@ -86,3 +89,6 @@ Auth.init(
         freezeTableName: true,
     },
 )
+
+
+Auth.belongsTo(User, { foreignKey: "userId" });

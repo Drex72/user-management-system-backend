@@ -18,11 +18,12 @@ module.exports = {
             },
             name: {
                 allowNull: false,
+                unique: true,
                 type: Sequelize.STRING,
             },
             description: {
                 allowNull: false,
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT,
                 comment: "Description of the event",
             },
             photo: {
@@ -49,6 +50,14 @@ module.exports = {
                 },
                 comment: "Link to the event page",
             },
+            inviteQrCode: {
+                type: Sequelize.STRING,
+                allowNull: false,
+                validate: {
+                    isUrl: true,
+                },
+                comment: "Invitation QRCode to the event page",
+            },
             date: {
                 type: Sequelize.DATEONLY,
                 allowNull: false,
@@ -58,6 +67,19 @@ module.exports = {
                 type: Sequelize.TIME,
                 allowNull: false,
                 comment: "Time of the event",
+            },
+            creatorId: {
+                type: Sequelize.INTEGER.UNSIGNED,
+                allowNull: true,
+
+                comment: "ID of the Creator of the Event",
+            },
+
+            creatorType: {
+                type: Sequelize.ENUM("user", "organization"),
+                allowNull: true,
+
+                comment: "Type of the Creator of the Event",
             },
             createdAt: {
                 type: Sequelize.DATE,

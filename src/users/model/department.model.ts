@@ -12,24 +12,18 @@ Department.init(
             type: DataTypes.UUID,
             allowNull: true,
             primaryKey: true,
-            defaultValue: UUIDV4
+            defaultValue: UUIDV4,
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
-        }
+            allowNull: false,
+        },
     },
     {
-        indexes: [
-            {
-                unique: true,
-                fields: ["id"]
-            }
-        ],
         modelName: "departments",
         tableName: "departments",
         sequelize,
         timestamps: true,
-        freezeTableName: true
-    }
+        freezeTableName: true,
+    },
 )

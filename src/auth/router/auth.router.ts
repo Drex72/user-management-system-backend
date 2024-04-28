@@ -61,7 +61,7 @@ authRouter
   )
 
 authRouter.post(
-  "/assign-permissions",
+  "/permissions/assign",
   ControlBuilder.builder()
   .setHandler(assignPermissions.handle)
   .setValidator(assignPermissionSchema)

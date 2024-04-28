@@ -19,7 +19,7 @@ UserPermissions.init(
         },
         permissionId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: Permission,
@@ -29,7 +29,7 @@ UserPermissions.init(
 
         userId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: false,
 
             references: {
                 model: User,
@@ -45,3 +45,6 @@ UserPermissions.init(
         freezeTableName: true,
     },
 )
+
+User.belongsToMany(Permission, { through: UserPermissions })
+Permission.belongsToMany(User, { through: UserPermissions })

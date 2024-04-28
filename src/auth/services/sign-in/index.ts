@@ -19,10 +19,6 @@ class SignIn {
     handle = async ({ input }: Context<SignInPayload>) => {
         const { email, password } = input
 
-        // const authUser = await this.dbAuth.findOne({
-        //     where: { email },
-        // })
-
         const authUser = await this.dbAuth.findOne({
             where: { email },
             include: [
@@ -58,7 +54,7 @@ class SignIn {
         return {
             code: HttpStatus.OK,
             message: AppMessages.SUCCESS.LOGIN,
-            data: responsePayload,
+            data: responsePayload.user ?? responsePayload,
             headers: {
                 "Set-Cookie": [
                     `accessToken=${generatedAccessToken}; Path=/; HttpOnly; maxAge=900000; SameSite=strict`,

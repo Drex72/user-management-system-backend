@@ -9,18 +9,35 @@ module.exports = {
          * Example:
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-        await queryInterface.createTable("permissions", {
+        await queryInterface.createTable("userDepartments", {
             id: {
                 type: Sequelize.UUID,
                 allowNull: false,
                 primaryKey: true,
                 defaultValue: Sequelize.UUIDV4,
             },
-            name: {
+
+            userId: {
+                type: Sequelize.UUID,
                 allowNull: false,
-                type: Sequelize.STRING,
-                unique: true,
+                references: {
+                    model: "users",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
             },
+            departmentId: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "departments",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
+
             createdAt: {
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.NOW,
@@ -32,6 +49,10 @@ module.exports = {
                 allowNull: false,
             },
         })
+
+        await queryInterface.addIndex("userDepartments", ["departmentId", "userId"], {
+            unique: true,
+        })
     },
 
     async down(queryInterface, Sequelize) {
@@ -41,6 +62,6 @@ module.exports = {
          * Example:
          * await queryInterface.dropTable('users');
          */
-        await queryInterface.dropTable("permissions")
+        await queryInterface.dropTable("userDepartments")
     },
 }

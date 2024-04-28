@@ -1,34 +1,28 @@
-//once the user scans a qr code, the user is redirected to the event page, th front send userid and eventid to the backend and the backend checks if the user is already registered for the event, change to attended
-import { BadRequestError, ForbiddenError, HttpStatus, config, imageUploadService, logger, sequelize, type Context } from "@/core"
+import { BadRequestError, HttpStatus, type Context } from "@/core"
 
-import { EventAttendance } from "@/events/model"
-import { RSVPEventPayload } from "../../interfaces"
+import { RSVPEventPayload } from "@/events/interfaces"
+import { Event, EventAttendance } from "@/events/model"
 
+class ViewEventAttendees {
+    constructor(private readonly dbEvent: typeof Event, private readonly dbEventAttendees: typeof EventAttendance) {}
 
+    handle = async ({ query }: Context<RSVPEventPayload>) => {
+        const { eventId } = query
 
-class EventAttendees{
-    constructor(private readonly dbEvent: typeof EventAttendance) {}
+        const event = await this.dbEvent.findOne({
+            where: { id: eventId },
+        })
 
-    handle = async ({ query }: Context<RSVPEventPayload>) =>{
+        if (!event) throw new BadRequestError(`Invalid Event: ${eventId}`)
 
-        try{
-            const { eventId } = query
+        const eventAttendees = await this.dbEventAttendees.findAll({ where: { status: "attended", eventId: eventId } })
 
-            const events = await this.dbEvent.findAll({ where: {status: "attended", eventId: eventId}})
-
-            if (!events) throw new BadRequestError("No one attended this event yet")
-
-            return {
-                code: HttpStatus.OK,
-                message: "All events successfully retrieved",
-                data: events,
-            }
-
-        }catch(error: any){
-            throw new Error("Error while getting those that reegistered for events attendees")
+        return {
+            code: HttpStatus.OK,
+            message: "Event Attendees Retrieved Successfully.",
+            data: eventAttendees,
         }
     }
 }
 
-
-export const eventAttendees = new EventAttendees(EventAttendance)
+export const viewEventAttendees = new ViewEventAttendees(Event, EventAttendance)

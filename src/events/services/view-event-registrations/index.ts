@@ -1,34 +1,28 @@
-//once the user scans a qr code, the user is redirected to the event page, th front send userid and eventid to the backend and the backend checks if the user is already registered for the event, change to attended
-import { BadRequestError, ForbiddenError, HttpStatus, config, imageUploadService, logger, sequelize, type Context } from "@/core"
+import { BadRequestError, HttpStatus, type Context } from "@/core"
 
-import { EventAttendance } from "@/events/model"
-import { RSVPEventPayload } from "../../interfaces"
+import { RSVPEventPayload } from "@/events/interfaces"
+import { Event, EventAttendance } from "@/events/model"
 
+class ViewEventRegistrations {
+    constructor(private readonly dbEvent: typeof Event, private readonly dbEventAttendees: typeof EventAttendance) {}
 
+    handle = async ({ query }: Context<RSVPEventPayload>) => {
+        const { eventId } = query
 
-class EventRegistered{
-    constructor(private readonly dbEvent: typeof EventAttendance) {}
+        const event = await this.dbEvent.findOne({
+            where: { id: eventId },
+        })
 
-    handle = async ({ query }: Context<RSVPEventPayload>) =>{
+        if (!event) throw new BadRequestError(`Invalid Event: ${eventId}`)
 
-        try {
+        const eventRegistrations = await this.dbEventAttendees.findAll({ where: { status: "registered", eventId: eventId } })
 
-            const { eventId } = query
-
-            const events = await this.dbEvent.findAll({ where: {status: "registered"}, eventId: eventId})
-
-            if (!events) throw new BadRequestError("No one registered for this event yet")
-
-            return {
-                code: HttpStatus.OK,
-                message: "All events successfully retrieved",
-                data: events,
-            }
-        } catch (error) {
-            throw new Error("Error while getting those that registered for this event ")
+        return {
+            code: HttpStatus.OK,
+            message: "Event Registrations Retrieved Successfully.",
+            data: eventRegistrations,
         }
     }
 }
 
-
-export const eventRegistered = new EventRegistered(EventAttendance)
+export const viewEventRegistrations = new ViewEventRegistrations(Event, EventAttendance)

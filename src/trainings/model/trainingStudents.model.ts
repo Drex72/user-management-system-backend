@@ -33,13 +33,13 @@ TrainingStudents.init(
                 key: "id",
             },
         },
-
         completedTraining: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
         acceptanceMailSent: {
             type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
     },
     {

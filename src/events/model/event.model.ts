@@ -1,6 +1,6 @@
 import { sequelize } from "@/core"
-import { User } from "@/users/model"
 import { DataTypes, Model, UUIDV4, type CreationOptional, type InferAttributes, type InferCreationAttributes } from "sequelize"
+import { EventCreatorType } from "../interfaces"
 
 export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
     declare id: CreationOptional<string>
@@ -11,7 +11,9 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
     declare date: Date
     declare time: string
     declare inviteLink: string
-    declare clientId: CreationOptional<string>
+    declare inviteQrCode: string
+    declare creatorId: CreationOptional<string>
+    declare creatorType: CreationOptional<EventCreatorType>
 }
 
 Event.init(
@@ -56,6 +58,14 @@ Event.init(
             },
             comment: "Link to the event page",
         },
+        inviteQrCode:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                isUrl: true,
+            },
+            comment: "Invitation QRCode to the event page",
+        },
         date: {
             type: DataTypes.DATEONLY,
             allowNull: false,
@@ -66,17 +76,20 @@ Event.init(
             allowNull: false,
             comment: "Time of the event",
         },
-        clientId: {
-            type: DataTypes.UUID,
+
+        creatorId: {
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: true,
 
-            references: {
-                model: User,
-                key: "id",
-            },
+            comment: "ID of the Creator of the Event",
+        },
 
-            comment: "Organization ID of the Organization",
-        }
+        creatorType: {
+            type: DataTypes.ENUM("user", "organization"),
+            allowNull: true,
+
+            comment: "Type of the Creator of the Event",
+        },
     },
     {
         modelName: "events",

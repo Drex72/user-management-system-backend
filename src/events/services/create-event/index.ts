@@ -1,6 +1,7 @@
-import { BadRequestError, ForbiddenError, HttpStatus, config, imageUploadService, logger, sequelize, type Context } from "@/core"
+import { BadRequestError, ForbiddenError, HttpStatus, cloudinary, config, imageUploadService, logger, sequelize, type Context } from "@/core"
 import type { CreateEventPayload } from "@/events/interfaces"
 import { Event } from "@/events/model"
+import { createQRCode } from "@/events/utils/createQrCode"
 
 class CreateEvent {
     constructor(private readonly dbEvent: typeof Event) {}
@@ -23,7 +24,17 @@ class CreateEvent {
         try {
             let inviteLink: string = `https://link.com/`
 
-            const createdEvent = await this.dbEvent.create({ ...input, photo: uploadedImage.secure_url, inviteLink }, { transaction: dbTransaction })
+            const qrCode = await createQRCode(inviteLink)
+
+            // Upload to Cloudinary
+            const qrCodeUrl = await cloudinary.uploader.upload(qrCode, {
+                folder: "qr_codes",
+            })
+
+            const createdEvent = await this.dbEvent.create(
+                { ...input, photo: uploadedImage.secure_url, inviteLink, inviteQrCode: qrCodeUrl.secure_url },
+                { transaction: dbTransaction },
+            )
 
             inviteLink += createdEvent.id
 

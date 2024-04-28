@@ -9,18 +9,43 @@ module.exports = {
          * Example:
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-        await queryInterface.createTable("permissions", {
+        await queryInterface.createTable("trainingStudents", {
             id: {
                 type: Sequelize.UUID,
                 allowNull: false,
                 primaryKey: true,
                 defaultValue: Sequelize.UUIDV4,
             },
-            name: {
+
+            userId: {
+                type: Sequelize.UUID,
                 allowNull: false,
-                type: Sequelize.STRING,
-                unique: true,
+                references: {
+                    model: "users",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
             },
+            trainingId: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "trainings",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
+            completedTraining: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+            },
+            acceptanceMailSent: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+            },
+
             createdAt: {
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.NOW,
@@ -32,6 +57,10 @@ module.exports = {
                 allowNull: false,
             },
         })
+
+        await queryInterface.addIndex("trainingStudents", ["trainingId", "userId"], {
+            unique: true,
+        })
     },
 
     async down(queryInterface, Sequelize) {
@@ -41,6 +70,6 @@ module.exports = {
          * Example:
          * await queryInterface.dropTable('users');
          */
-        await queryInterface.dropTable("permissions")
+        await queryInterface.dropTable("trainingStudents")
     },
 }
