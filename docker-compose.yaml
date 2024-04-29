@@ -12,7 +12,7 @@ services:
             - .:/app
             - /app/node_modules
         depends_on:
-            - db
+            - nitmanager_db
 
     nitmanager_db:
         image: postgres
