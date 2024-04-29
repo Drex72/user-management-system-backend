@@ -18,7 +18,7 @@ services:
         image: postgres
         restart: always
         env_file: ./.env
-        container_name: nitprofile_database
+        container_name: nitmanagement_database
         ports:
             - "5431:5432"
         environment:
