@@ -11,10 +11,7 @@ class GetDepartmentUsers {
 
         const departmentUsers = await this.dbUserDepartment.findAll({
             where: { departmentId },
-            include: {
-                model: User,
-                attributes: ["id", "firstName", "lastName", "email", "phoneNumber", "emailVerified", "phoneNumberVerified"],
-            },
+         
         })
 
         return {

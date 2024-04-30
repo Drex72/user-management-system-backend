@@ -8,6 +8,16 @@ export const createDepartmentSchema: ValidationSchema = {
     }),
 }
 
+export const updateDepartmentSchema: ValidationSchema = {
+    inputSchema: Joi.object({
+        name: Joi.string().trim().required(),
+    }),
+
+    querySchema: Joi.object({
+        departmentId: Joi.string().length(36).required(),
+    }),
+}
+
 export const assignUserToDepartmentSchema: ValidationSchema = {
     inputSchema: Joi.object({
         userId: Joi.string().trim().required(),

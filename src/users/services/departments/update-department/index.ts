@@ -16,11 +16,14 @@ class UpdateDepartment {
 
         if (!department) throw new BadRequestError("Invalid Department!")
 
-        await this.dbDepartment.update({ ...input }, { where: { id: departmentId } })
+        await department.update({ ...input }, { where: { id: departmentId } })
+
+        await department.save()
 
         return {
             code: HttpStatus.OK,
             message: "Department Updated Successfully",
+            data: department,
         }
     }
 }

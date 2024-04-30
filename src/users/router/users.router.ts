@@ -3,7 +3,7 @@ import { Router } from "express"
 
 import { assignUserToDepartment, createDepartment, getDepartmentUsers, updateDepartment, viewDepartments } from "../services/departments"
 import { createBulkUsers, createSingleUser, updateUser, viewUsers } from "../services/users"
-import { assignUserToDepartmentSchema, createBulkUsersSchema, createDepartmentSchema, createUserSchema, getDepartmentUsersSchema, viewUsersSchema,updateUserSchema } from './schema'
+import { assignUserToDepartmentSchema, createBulkUsersSchema, createDepartmentSchema, createUserSchema, getDepartmentUsersSchema, viewUsersSchema,updateUserSchema, updateDepartmentSchema } from './schema'
 
 export const usersRouter = Router()
 
@@ -55,7 +55,7 @@ usersRouter
     .patch(
         ControlBuilder.builder()
             .setHandler(updateDepartment.handle)
-            .setValidator(createDepartmentSchema)
+            .setValidator(updateDepartmentSchema)
             .handle()
     )
 
