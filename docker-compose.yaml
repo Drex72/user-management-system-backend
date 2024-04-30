@@ -13,6 +13,8 @@ services:
             - /app/node_modules
         depends_on:
             - nitmanager_db
+        links:
+            - nitmanager_cache:nitmanager_cache
 
     nitmanager_db:
         image: postgres
@@ -25,8 +27,13 @@ services:
             POSTGRES_USER: admin
             POSTGRES_PASSWORD: adminpassword
             POSTGRES_DB: nitmanager_db
+    nitmanager_cache:
+        image: 'redis:alpine'
+        container_name: nitmanager_cache
+        ports:
+        - '6379:6379'
 
-networks:
-  default:
-    name: nithub
-    external: false
+# networks:
+#   default:
+#     name: nithub
+#     external: false
