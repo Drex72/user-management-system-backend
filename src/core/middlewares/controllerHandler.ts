@@ -11,8 +11,8 @@ import {
     logger,
     parseControllerArgs,
 } from "@/core"
+import { User } from "@/users/model"
 import type { NextFunction, Request, Response } from "express"
-import { AppMessages } from "../common"
 
 /**
  * @typedef AuthenticateRequestOptions
@@ -83,9 +83,9 @@ export class ControllerHandler {
 
                 // Authorize the request if roles are specified and user exists.
                 if ((options.allowedPermission || options.allowedRoles?.length) && req.user) {
-                    this.authorizeRequest({
+                    await this.authorizeRequest({
                         user: req.user,
-                        allowedRoles: (options.allowedRoles = []),
+                        allowedRoles: options.allowedRoles ?? [],
                         permission: options.allowedPermission ?? "",
                     })
                 }
@@ -130,12 +130,12 @@ export class ControllerHandler {
         const { callbackFn, cookies, user } = data
 
         // If user data exists and is valid, skip authentication.
-        if (user && user.id && user?.roles.length) return
+        if (user && user.id) return
 
         // Perform authentication using authGuard.
         const isRequestAllowed = await authGuard.guard(cookies)
 
-        if (!isRequestAllowed) throw new UnAuthorizedError(AppMessages.FAILURE.INVALID_CREDENTIALS)
+        if (!isRequestAllowed) throw new UnAuthorizedError("Unauthorized")
 
         // Set the user on the request using the callback.
         callbackFn(isRequestAllowed)
@@ -178,10 +178,26 @@ export class ControllerHandler {
         // If the user has the necessary permission, early return
         if (hasPermission) return
 
+        const cachedRoles = await cache.get(user.id)
+
+        let userRoles: IAuthRole[] = []
+
+        if (cachedRoles) {
+            userRoles = JSON.parse(cachedRoles)
+        } else {
+            const existingUser = await User.findOne({ where: { id: user.id } })
+
+            if (existingUser) {
+                userRoles = existingUser.roles?.map((role) => role.name) as IAuthRole[]
+
+                await cache.set(user.id, JSON.stringify(userRoles), "EX", 3600)
+            }
+        }
+
         // Check for role-based authorization only if permission-based authorization fails
         const hasRole = await this.roleBasedAuthorization({
             allowedRoles: allowedRoles,
-            userRoles: user.roles,
+            userRoles,
         })
 
         // If the user does not have the role, throw an error

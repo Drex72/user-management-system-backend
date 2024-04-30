@@ -1,8 +1,8 @@
+import { cache } from "@/app/app-cache"
 import type { SignOutPayload } from "@/auth/interfaces"
-import { User } from "@/users/model"
+import { Auth } from "@/auth/model"
 import { HttpStatus, type Context } from "@/core"
 import { AppMessages } from "@/core//common"
-import { Auth } from "@/auth/model"
 
 class SignOut {
     constructor(private readonly dbAuth: typeof Auth) {}
@@ -14,6 +14,8 @@ class SignOut {
      */
     public handle = async ({ user }: Context<SignOutPayload>) => {
         await this.dbAuth.update({ refreshToken: "", refreshTokenExp: undefined }, { where: { id: user.id } })
+
+        await cache.remove(user.id)
 
         return {
             code: HttpStatus.NO_CONTENT,

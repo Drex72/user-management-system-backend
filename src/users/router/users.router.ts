@@ -14,6 +14,8 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(createSingleUser.handle)
             .setValidator(createUserSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )
     .get(
@@ -26,6 +28,8 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(updateUser.handle)
             .setValidator(updateUserSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )
 
@@ -35,6 +39,8 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(createBulkUsers.handle)
             .setValidator(createBulkUsersSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )
 
@@ -45,6 +51,8 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(createDepartment.handle)
             .setValidator(createDepartmentSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )
     .get(
@@ -56,6 +64,8 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(updateDepartment.handle)
             .setValidator(updateDepartmentSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )
 
@@ -72,5 +82,7 @@ usersRouter
         ControlBuilder.builder()
             .setHandler(assignUserToDepartment.handle)
             .setValidator(assignUserToDepartmentSchema)
+            .isPrivate()
+            .only("ADMIN")
             .handle()
     )

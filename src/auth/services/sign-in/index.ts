@@ -1,3 +1,4 @@
+import { cache } from "@/app/app-cache"
 import { tokenService, type TokenService } from "@/auth/helpers/token"
 import type { SignInPayload } from "@/auth/interfaces"
 import { Auth, Role } from "@/auth/model"
@@ -6,7 +7,7 @@ import { AppMessages } from "@/core/common"
 import { User } from "@/users/model"
 
 class SignIn {
-    constructor(private readonly dbAuth: typeof Auth,  private readonly tokenService: TokenService) {}
+    constructor(private readonly dbAuth: typeof Auth, private readonly tokenService: TokenService) {}
 
     /**
      * Handles user login, performs necessary validations, and generates tokens for authentication.
@@ -39,10 +40,12 @@ class SignIn {
 
         const roles = user.roles?.map((role) => role.name as IAuthRole) ?? []
 
+        // Store roles in cache
+        await cache.set(user.id, JSON.stringify(roles), "EX", 3600)
+
         const [generatedAccessToken, generatedRefreshToken] = await this.tokenService.getTokens({
             id: user.id,
             email: user.email,
-            roles,
         })
 
         await this.dbAuth.update({ refreshToken: generatedRefreshToken, refreshTokenExp: new Date() }, { where: { id: user.id } })

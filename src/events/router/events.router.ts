@@ -12,17 +12,22 @@ eventsRouter
     ControlBuilder.builder()
       .setHandler(createEvent.handle)
       .setValidator(createEventSchema)
+      .isPrivate()
+      .only("ADMIN")
       .handle(),
   )
   .get(
     ControlBuilder.builder()
       .setHandler(viewEvents.handle)
+      .isPrivate()
       .handle(),
   )
   .patch(
     ControlBuilder.builder()
       .setHandler(updateEvent.handle)
       .setValidator(updateEventSchema)
+      .isPrivate()
+      .only("ADMIN")
       .handle(),
   )
 
@@ -39,6 +44,7 @@ eventsRouter.post(
   ControlBuilder.builder()
   .setHandler(attendEvent.handle)
   .setValidator(attendEventSchema)
+  .isPrivate()
   .isIpRestricted(["213.255.128.169"])
   .handle()
 )
@@ -48,6 +54,8 @@ eventsRouter.get(
   ControlBuilder.builder()
   .setHandler(viewEventAttendees.handle)
   .setValidator(eventQuerySchema)
+  .isPrivate()
+  .only("ADMIN")
   .handle()
 )
 
@@ -56,6 +64,8 @@ eventsRouter.get(
   ControlBuilder.builder()
   .setHandler(viewEventRegistrations.handle)
   .setValidator(eventQuerySchema)
+  .isPrivate()
+  .only("ADMIN")
   .handle()
 )
 

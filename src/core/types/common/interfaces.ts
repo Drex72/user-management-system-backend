@@ -52,7 +52,6 @@ export type IAuthRole = (typeof user_roles)[number]
 export type ITokenSignedPayload = {
     id: string
     email: string
-    roles: IAuthRole[]
 }
 
 /**

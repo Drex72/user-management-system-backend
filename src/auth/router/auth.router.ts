@@ -38,11 +38,15 @@ authRouter
     ControlBuilder.builder()
       .setHandler(createRole.handle)
       .setValidator(nameSchema)
+      .isPrivate()
+      .only("ADMIN")
       .handle(),
   )
   .get(
     ControlBuilder.builder()
       .setHandler(getRoles.handle)
+      .isPrivate()
+      .only("ADMIN")
       .handle(),
   )
 
@@ -52,6 +56,8 @@ authRouter
     ControlBuilder.builder()
       .setHandler(createPermision.handle)
       .setValidator(nameSchema)
+      .isPrivate()
+      .only("DEVELOPER")
       .handle(),
   )
   .get(
@@ -65,6 +71,8 @@ authRouter.post(
   ControlBuilder.builder()
   .setHandler(assignPermissions.handle)
   .setValidator(assignPermissionSchema)
+  .isPrivate()
+  .only("ADMIN")
   .handle(),
 
 )
