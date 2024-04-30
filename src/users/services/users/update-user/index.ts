@@ -16,11 +16,14 @@ class UpdateUser {
 
         if (!user) throw new BadRequestError("Invalid User!")
 
-        await this.dbUser.update({ ...input }, { where: { id: userId } })
+        await user.update({ ...input }, { where: { id: userId } })
+
+        await user.save()
 
         return {
             code: HttpStatus.OK,
             message: "User Updated Successfully",
+            data: user,
         }
     }
 }

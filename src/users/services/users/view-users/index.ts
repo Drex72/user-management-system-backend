@@ -26,12 +26,12 @@ class ViewUsers {
         }
     }
 
-    private get_users_by_role = async (roleName: string) => {
+    private get_users_by_role = async (roleId: string) => {
         const users = await this.dbUser.findAll({
             include: [
                 {
                     model: Role,
-                    where: { name: roleName.toLocaleUpperCase() },
+                    where: { id: roleId },
                     required: true,
                 },
             ],

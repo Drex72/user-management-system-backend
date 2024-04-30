@@ -30,7 +30,7 @@ export const createUserSchema: ValidationSchema = {
         firstName: Joi.string().trim().required(),
         lastName: Joi.string().trim().required(),
         phoneNumber: Joi.string().trim().optional(),
-        roleIds: Joi.array().items(Joi.string().trim().required()),
+        roleIds: Joi.array().items(Joi.string().trim().required()).min(1),
     }),
 }
 
@@ -40,9 +40,12 @@ export const updateUserSchema: ValidationSchema = {
         firstName: Joi.string().trim(),
         lastName: Joi.string().trim(),
         phoneNumber: Joi.string().trim(),
-        roleIds: Joi.array().items(Joi.string().trim().required()),
     }).min(1), // At least one field is required for updating
-};
+
+    querySchema: Joi.object({
+        userId: Joi.string().length(36).required(),
+    }),
+}
 
 export const createBulkUsersSchema: ValidationSchema = {
     querySchema: Joi.object({

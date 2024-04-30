@@ -8,7 +8,7 @@ const csvSchema = Joi.object({
     email: Joi.string().required().trim(),
     firstName: Joi.string().trim().required(),
     lastName: Joi.string().trim().required(),
-    phoneNumber: Joi.string().trim().optional(),
+    phoneNumber: Joi.string().trim().allow(""),
 })
 
 class CreateUsers {
@@ -24,16 +24,24 @@ class CreateUsers {
         try {
             const createdUsers = []
 
+            const existingUsers = []
+
             for (const userData of convertedJson) {
                 let value = csvSchema.validate(userData)
 
                 if (value.error) throw new BadRequestError(`Invalid User ${JSON.stringify(userData)}`)
 
-                const createdUser = await createUser.handle({ ...userData, roleIds: [query.roleId] }, dbTransaction)
+                const { phoneNumber, ...rest } = userData
 
-                if (!createdUser.newUserCreated) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+                const payload = this.isValidPhoneNumber(phoneNumber) ? userData : rest
 
-                createdUsers.push(createdUser.newUser)
+                const createdUser = await createUser.handle({ ...payload, roleIds: [query.roleId] }, dbTransaction)
+
+                if (!createdUser.newUserCreated) {
+                    existingUsers.push(createdUser.newUser)
+                } else {
+                    createdUsers.push(createdUser.newUser)
+                }
             }
 
             await dbTransaction.commit()
@@ -41,7 +49,10 @@ class CreateUsers {
             return {
                 code: HttpStatus.CREATED,
                 message: AppMessages.SUCCESS.BULK_CREATE_SUCCESS,
-                data: createdUsers,
+                data: {
+                    newUsers: createdUsers,
+                    existingUsers,
+                },
             }
         } catch (error: any) {
             dbTransaction.rollback()
@@ -50,6 +61,11 @@ class CreateUsers {
 
             throw new Error("Error while bulk creating users. Please make sure data is correct and retry.")
         }
+    }
+
+    private isValidPhoneNumber(phoneNumber: any): boolean {
+        // Check if phoneNumber is a non-empty string and matches the regex
+        return typeof phoneNumber === "string" && phoneNumber.trim() !== ""
     }
 }
 

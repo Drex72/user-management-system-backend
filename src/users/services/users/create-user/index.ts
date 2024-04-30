@@ -9,12 +9,12 @@ class CreateUser {
     handle = async ({ input }: Context<CreateNewUserPayload>) => {
         const createdUser = await createUser.handle(input)
 
-        if (!createdUser.newUserCreated) throw new BadRequestError(AppMessages.FAILURE.EMAIL_EXISTS)
+        if (!createdUser.newUserCreated) throw new BadRequestError("User already exists!")
 
         return {
             code: HttpStatus.CREATED,
             message: "User Created Successfully",
-            data: createdUser,
+            data: createdUser.newUser,
         }
     }
 }
