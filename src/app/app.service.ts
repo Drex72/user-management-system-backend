@@ -23,7 +23,7 @@ app.use(
 );
 
 // Enable Cross-Origin Resource Sharing (CORS) with predefined options.
-app.use(cors(corsOptions));
+// app.use(cors());
 
 // Serve static files located in the 'public' directory.
 // This directory will now be publicly accessible via HTTP.
