@@ -110,7 +110,7 @@ export class ControllerHandler {
 
                 const { code, headers, ...data } = controllerResult
 
-                res.set({ ...headers })
+                res.set({ ...headers , "Access-Control-Allow-Origin": "http://localhost:3000"})
                     .status(code ?? HttpStatus.OK)
                     .send(data)
             } catch (error) {
