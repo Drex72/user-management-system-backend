@@ -10,6 +10,6 @@ const allowedHeaders: string[] = ["Content-Type", "Authorization"]
 export const corsOptions: CorsOptions = {
     methods: allowedMethods,
     allowedHeaders,
-    origin: "*",
+    origin: allowedOrigins,
     credentials: true,
 }
