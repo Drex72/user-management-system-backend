@@ -28,6 +28,10 @@ const envSchema = Joi.object()
         DATABASE_PASSWORD: Joi.string().allow("").required(),
         DATABASE_TYPE: Joi.string().required(),
 
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.string().required(),
+        REDIS_PASSWORD: Joi.string().required(),
+
         SENDGRID_API_KEY: Joi.string().required(),
         SENDGRID_EMAIL: Joi.string().required(),
 
@@ -101,6 +105,7 @@ export const config = Object.freeze({
     cache: {
         port: parseInt(process.env.REDIS_PORT!),
         host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD,
         ttl: parseInt(process.env.REDIS_TTL!),
     },
 })

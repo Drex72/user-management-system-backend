@@ -45,6 +45,7 @@ export class AppCacheManager extends Redis {
 }
 
 export const cache = new AppCacheManager({
-    host: "nitmanager_cache",
-    port: 6379,
+    host: config.cache.host,
+    port: config.cache.port,
+    password:config.cache.password,
 })
