@@ -29,10 +29,11 @@ class CreateEvent {
             // Upload to Cloudinary
             const qrCodeUrl = await cloudinary.uploader.upload(qrCode, {
                 folder: "qr_codes",
+                use_filename:true,
             })
 
             const createdEvent = await this.dbEvent.create(
-                { ...input, photo: uploadedImage.secure_url, inviteLink, inviteQrCode: qrCodeUrl.secure_url },
+                { ...input, photo: uploadedImage.url, inviteLink, inviteQrCode: qrCodeUrl.secure_url },
                 { transaction: dbTransaction },
             )
 

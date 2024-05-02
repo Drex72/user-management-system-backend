@@ -38,10 +38,11 @@ class ImageUploadService {
 
             // Upload the image to Cloudinary
             const fileInfo = await cloudinary.uploader.upload(tempFilePath, {
-                timeout: 12000000,
-                resource_type: "auto",
-                public_id: `Nithub/${folderName}/${fileName}`,
+                // timeout: 12000000,
+                // resource_type: "auto",
+                // public_id: `Nithub/${folderName}/${fileName}`,
                 chunk_size: 8000001,
+                use_filename: true,
             })
 
             // Delete the temporary file generated when uploading the image
