@@ -57,7 +57,13 @@ class SignIn {
         return {
             code: HttpStatus.OK,
             message: AppMessages.SUCCESS.LOGIN,
-            data: responsePayload.user ?? responsePayload,
+            data: {
+                user: responsePayload.user ?? responsePayload,
+                tokens: {
+                    accessToken: generatedAccessToken,
+                    refreshToken: generatedRefreshToken,
+                },
+            },
             headers: {
                 "Set-Cookie": [
                     `accessToken=${generatedAccessToken}; Path=/; HttpOnly; maxAge=900000; SameSite=strict`,

@@ -1,7 +1,7 @@
 import { ControlBuilder } from "@/core/middlewares/controlBuilder"
 import { Router } from "express"
 import { attendEvent, createEvent, rsvpEvent, updateEvent, viewEventAttendees, viewEventRegistrations, viewEvents } from "../services"
-import { attendEventSchema, createEventSchema, eventQuerySchema, rsvpEventSchema, updateEventSchema } from "./schema"
+import { attendEventSchema, createEventSchema, eventQuerySchema, rsvpEventSchema, updateEventSchema, viewEventsSchema } from "./schema"
 
 export const eventsRouter = Router()
 
@@ -12,14 +12,15 @@ eventsRouter
     ControlBuilder.builder()
       .setHandler(createEvent.handle)
       .setValidator(createEventSchema)
-      .isPrivate()
-      .only("ADMIN")
+      // .isPrivate()
+      // .only("ADMIN")
       .handle(),
   )
   .get(
     ControlBuilder.builder()
       .setHandler(viewEvents.handle)
-      .isPrivate()
+      .setValidator(viewEventsSchema)
+      // .isPrivate()
       .handle(),
   )
   .patch(

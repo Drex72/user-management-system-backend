@@ -13,6 +13,7 @@ import {
 } from "@/core"
 import { User } from "@/users/model"
 import type { NextFunction, Request, Response } from "express"
+import { IncomingHttpHeaders } from "http"
 
 /**
  * @typedef AuthenticateRequestOptions
@@ -22,6 +23,8 @@ import type { NextFunction, Request, Response } from "express"
  */
 type AuthenticateRequestOptions = {
     cookies: Record<any, any>
+    headers: IncomingHttpHeaders
+
     user: ITokenSignedPayload | null | undefined
     callbackFn: (user: ITokenSignedPayload) => void
 }
@@ -75,6 +78,7 @@ export class ControllerHandler {
                     await this.authenticateRequest({
                         user: req.user,
                         cookies: req.cookies,
+                        headers: req.headers,
                         callbackFn: (user) => {
                             req.user = user
                         },
@@ -110,7 +114,7 @@ export class ControllerHandler {
 
                 const { code, headers, ...data } = controllerResult
 
-                res.set({ ...headers , "Access-Control-Allow-Origin": "http://localhost:3000"})
+                res.set({ ...headers, "Access-Control-Allow-Origin": "http://localhost:3000" })
                     .status(code ?? HttpStatus.OK)
                     .send(data)
             } catch (error) {
@@ -127,13 +131,16 @@ export class ControllerHandler {
      * @private
      */
     private async authenticateRequest(data: AuthenticateRequestOptions) {
-        const { callbackFn, cookies, user } = data
+        const { callbackFn, headers, user } = data
+        console.log(headers["authorization"])
 
+
+        
         // If user data exists and is valid, skip authentication.
         if (user && user.id) return
 
         // Perform authentication using authGuard.
-        const isRequestAllowed = await authGuard.guard(cookies)
+        const isRequestAllowed = await authGuard.guard(headers)
 
         if (!isRequestAllowed) throw new UnAuthorizedError("Unauthorized")
 

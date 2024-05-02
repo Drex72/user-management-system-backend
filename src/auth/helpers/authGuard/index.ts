@@ -1,17 +1,27 @@
 import { config, type ITokenSignedPayload } from "@/core"
 import { tokenService, type TokenService } from "../token"
+import { IncomingHttpHeaders } from "http"
 
 class AuthGuard {
     constructor(private readonly tokenService: TokenService) {}
 
-    public guard = async (cookies: any): Promise<false | ITokenSignedPayload> => {
-        const cookieAccessToken = cookies?.accessToken
+    public guard = async (headers: IncomingHttpHeaders): Promise<false | ITokenSignedPayload> => {
 
-        if (!cookieAccessToken) return false
+        const authorization = headers["authorization"]
+
+        if(!authorization) return false
+
+        const token = authorization.split(" ")[1]
+
+        if(!token) return false
+
+        // const cookieAccessToken = cookies?.accessToken
+
+        // if (!cookieAccessToken) return false
 
         const { accessTokenSecret } = config.auth
 
-        const user = await this.tokenService.extractTokenDetails(cookieAccessToken, accessTokenSecret)
+        const user = await this.tokenService.extractTokenDetails(token, accessTokenSecret)
 
         if (!user) return false
 

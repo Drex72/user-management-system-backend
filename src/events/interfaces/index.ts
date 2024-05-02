@@ -45,6 +45,15 @@ export interface RSVPEventPayload extends ContextTypes {
     }
 }
 
+
+export interface ViewEventPayload extends ContextTypes {
+   
+
+    query: {
+        eventId: string
+    }
+}
+
 export type ParsedTokenPayload = {
     eventId: string
     userId: string

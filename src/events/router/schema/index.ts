@@ -8,6 +8,13 @@ export const schema: ValidationSchema = {
     }),
 }
 
+export const viewEventsSchema: ValidationSchema = {
+    querySchema: Joi.object({
+        eventId: Joi.string().trim().optional(),
+    }),
+}
+
+
 export const createEventSchema: ValidationSchema = {
     inputSchema: Joi.object({
         name: Joi.string().trim().required(),

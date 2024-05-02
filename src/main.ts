@@ -1,8 +1,8 @@
 "use strict"
 import "module-alias/register"
 
-import { startApp } from "@/app"
 import { gracefullyShutdown, initializeDbConnection, logger } from "@/core"
+import { startApp } from "./app"
 
 // Initialize the database connection, start the application if successful, or shut down gracefully if an error occurs
 initializeDbConnection().then(startApp).catch(gracefullyShutdown)

@@ -2,6 +2,8 @@ import { sequelize } from "@/core"
 import { DataTypes, Model, UUIDV4, type CreationOptional, type InferAttributes, type InferCreationAttributes } from "sequelize"
 import { EventCreatorType } from "../interfaces"
 
+export type EventStatus = "past" | "upcoming" | "ongoing"
+
 export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
     declare id: CreationOptional<string>
     declare name: string
@@ -58,7 +60,7 @@ Event.init(
             },
             comment: "Link to the event page",
         },
-        inviteQrCode:{
+        inviteQrCode: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
@@ -76,7 +78,7 @@ Event.init(
             allowNull: false,
             comment: "Time of the event",
         },
-
+      
         creatorId: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: true,
@@ -99,3 +101,5 @@ Event.init(
         freezeTableName: true,
     },
 )
+
+
