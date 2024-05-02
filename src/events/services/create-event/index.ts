@@ -37,6 +37,8 @@ class CreateEvent {
                 { transaction: dbTransaction },
             )
 
+            inviteLink = `https://attendance-delta-black.vercel.app/forms?eventId=${createdEvent.id}`
+
             inviteLink += createdEvent.id
 
             await this.dbEvent.update({ inviteLink }, { where: { id: createdEvent.id }, transaction: dbTransaction })
